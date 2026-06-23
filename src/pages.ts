@@ -94,16 +94,24 @@ export function home(): string {
     <section class="hero">
       <div class="hero-overlay"></div>
       <div class="container hero-content">
-        <p class="eyebrow">Welcome to ${SITE.name}</p>
-        <h1 class="hero-title">Come and find<br><em>grace and rest.</em></h1>
+        <p class="eyebrow eyebrow-rule">Welcome to ${SITE.name}</p>
+        <h1 class="hero-title">Come and find<br><em>grace &amp; rest.</em></h1>
         <p class="hero-lead">
           No matter where you've been or what you carry, there is mercy waiting for you here. Come as
           you are, meet the living God, and discover the life He has for you.
         </p>
         <div class="hero-actions">
-          <a class="btn btn-light" href="/services">Join Us This Week</a>
-          <a class="btn btn-outline-light" href="/about">Who We Are ${raw(icon("arrow").value)}</a>
+          <a class="btn btn-light btn-lg" href="/services">Join Us This Week ${raw(
+            icon("arrow").value,
+          )}</a>
+          <a class="btn btn-outline-light btn-lg" href="/about">Who We Are</a>
         </div>
+        <ul class="hero-facts">
+          <li>${raw(icon("clock").value)}<span>Sundays at 10:15 AM</span></li>
+          <li>${raw(icon("pin").value)}<span>${CONTACT.address.city}, ${CONTACT.address
+            .state}</span></li>
+          <li>${raw(icon("video").value)}<span>Streaming live on Zoom</span></li>
+        </ul>
       </div>
       <div class="hero-scroll" aria-hidden="true"><span></span></div>
     </section>

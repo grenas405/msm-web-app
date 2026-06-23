@@ -2,22 +2,38 @@
 
 All notable changes to the Mercy Seat Ministries web app are documented here.
 
+## [1.2.0] — 2026-06-23
+
+### Changed
+
+- **Industry-grade hero redesign.** Tighter display typography (refined size, line-height, and
+  tracking), a gold rule accent on the eyebrow, larger primary/secondary CTAs, and a wider, more
+  readable lead.
+- **Reworked hero calls to action.** The arrow now sits on the primary "Join Us This Week" button;
+  "Who We Are" is a clean outline button — fixing the awkward arrow spacing that appeared on it
+  before.
+
+### Added
+
+- **Hero quick-facts bar** beneath the CTAs — service time, city, and online option, each with a
+  gold icon — adding trust signals and polish.
+
 ## [1.1.0] — 2026-06-23
 
 ### Changed
 
-- **Replaced the Exodus 25:22 banner verse with Hebrews 4:16** ("approach God's throne
-  of grace... receive mercy") — the New Testament fulfillment of the mercy seat in Christ.
-- **More inspiring landing copy.** New hero headline ("Come and find grace and rest") and
-  a warmer, invitation-focused welcome section, with the mission statement set as a quote.
+- **Replaced the Exodus 25:22 banner verse with Hebrews 4:16** ("approach God's throne of grace...
+  receive mercy") — the New Testament fulfillment of the mercy seat in Christ.
+- **More inspiring landing copy.** New hero headline ("Come and find grace and rest") and a warmer,
+  invitation-focused welcome section, with the mission statement set as a quote.
 
 ### Added
 
-- **"Promises to Stand On" verse section** on the home page with three New Testament
-  promises (Matthew 11:28, 2 Corinthians 5:17, Ephesians 2:8) as styled scripture cards.
+- **"Promises to Stand On" verse section** on the home page with three New Testament promises
+  (Matthew 11:28, 2 Corinthians 5:17, Ephesians 2:8) as styled scripture cards.
 - **Benediction verse** (Ephesians 3:20–21) closing the Contact page for variety.
-- New `Verse` type plus `VERSES` and `BENEDICTION` exports in `content.ts`; the scripture
-  banner now accepts any verse. Styles for verse cards, the mission quote, and section lead.
+- New `Verse` type plus `VERSES` and `BENEDICTION` exports in `content.ts`; the scripture banner now
+  accepts any verse. Styles for verse cards, the mission quote, and section lead.
 
 ## [1.0.1] — 2026-06-23
 
