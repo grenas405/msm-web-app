@@ -113,7 +113,6 @@ export function home(): string {
           <li>${raw(icon("video").value)}<span>Streaming live on Zoom</span></li>
         </ul>
       </div>
-      <div class="hero-scroll" aria-hidden="true"><span></span></div>
     </section>
 
     ${raw(scriptureBanner())}

@@ -419,41 +419,6 @@ img, svg, iframe {
   flex: none;
 }
 
-.hero-scroll {
-  position: absolute;
-  bottom: 1.75rem;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 26px;
-  height: 42px;
-  border: 2px solid rgba(255, 255, 255, 0.4);
-  border-radius: 999px;
-}
-.hero-scroll span {
-  position: absolute;
-  top: 8px;
-  left: 50%;
-  width: 4px;
-  height: 8px;
-  margin-left: -2px;
-  background: var(--gold-400);
-  border-radius: 2px;
-  animation: scroll 1.8s ease-in-out infinite;
-}
-@keyframes scroll {
-  0% {
-    opacity: 0;
-    transform: translateY(0);
-  }
-  40% {
-    opacity: 1;
-  }
-  100% {
-    opacity: 0;
-    transform: translateY(14px);
-  }
-}
-
 /* ── Scripture banner ────────────────────────────────────── */
 .scripture {
   background: var(--navy-800);

@@ -2,6 +2,14 @@
 
 All notable changes to the Mercy Seat Ministries web app are documented here.
 
+## [1.2.1] — 2026-06-23
+
+### Removed
+
+- **Hero scroll-cue indicator.** Removed the animated mouse/scroll dot at the bottom of the hero
+  (markup, CSS, and the `scroll` keyframes) — it read as a stray floating circle and the hero's CTAs
+  and facts bar already guide the eye.
+
 ## [1.2.0] — 2026-06-23
 
 ### Changed
