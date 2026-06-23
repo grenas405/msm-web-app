@@ -1,0 +1,41 @@
+// main.ts — Entry point. Wires the HTTP server to two concerns:
+//   1. Static assets under /static  (handled by @std/http's serveDir)
+//   2. Everything else              (handled by the page router)
+//
+// The only external dependency is JSR @std/http. The handler is a single,
+// explicit function so the request lifecycle reads top to bottom.
+
+import { serveDir } from "@std/http/file-server";
+import { route } from "./src/router.ts";
+
+const STATIC_ROOT = new URL("./static", import.meta.url).pathname;
+const PORT = Number(Deno.env.get("PORT") ?? 8000);
+
+/** Route a single request to static files or the page router. */
+async function handler(request: Request): Promise<Response> {
+  const url = new URL(request.url);
+
+  if (url.pathname.startsWith("/static/")) {
+    return await serveDir(request, {
+      fsRoot: STATIC_ROOT,
+      urlRoot: "static",
+      quiet: true,
+    });
+  }
+
+  if (request.method !== "GET" && request.method !== "HEAD") {
+    return new Response("Method Not Allowed", { status: 405 });
+  }
+
+  return route(url.pathname);
+}
+
+if (import.meta.main) {
+  Deno.serve({ port: PORT, onListen }, handler);
+}
+
+/** Friendly startup banner. */
+function onListen({ hostname, port }: { hostname: string; port: number }): void {
+  const host = hostname === "0.0.0.0" ? "localhost" : hostname;
+  console.log(`\n  Mercy Seat Ministries — serving at http://${host}:${port}\n`);
+}

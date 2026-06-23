@@ -1,0 +1,38 @@
+# Changelog
+
+All notable changes to the Mercy Seat Ministries web app are documented here.
+
+## [1.0.0] — 2026-06-23
+
+Initial release. A complete, server-rendered website for Mercy Seat Ministries OKC.
+
+### Added
+
+- **Deno HTTP server** (`main.ts`) using only JSR `@std/http`. Serves static assets via `serveDir`
+  and dispatches all other GET requests to the page router. Configurable `PORT` (default `8000`).
+- **Unix-philosophy architecture** — small, single-purpose modules composed through simple, explicit
+  functions. Every page is a pure `() => string` builder.
+  - `src/content.ts` — single source of truth for all ministry data.
+  - `src/html.ts` — safe HTML templating (`escape`, `html` tagged template, `raw`).
+  - `src/icons.ts` — inline SVG icon set.
+  - `src/layout.ts` — shared document shell (head, header/nav, footer).
+  - `src/pages.ts` — one function per page.
+  - `src/router.ts` — explicit path → `Response` route table with 404 fallback.
+- **Five pages**: Home, About, Services, Ministries, Contact — plus a styled 404.
+- **Professional design system** (`static/styles.css`) — a covenant-navy + gold palette on warm
+  ivory, Cormorant Garamond display type over Inter, full hero, scripture banners, service/ministry
+  cards, CTA bands, and an embedded contact map.
+- **Progressive enhancement** (`static/app.js`) — mobile nav, sticky-header shadow, and
+  reveal-on-scroll. The site is fully functional with JavaScript disabled.
+- **Accessibility & SEO** — skip link, semantic landmarks, `aria` labels, per-page `<title>`/meta
+  description, Open Graph tags, and `prefers-reduced-motion` support.
+- **Responsive layout** down to small mobile screens.
+- **Content sourced** from the ministry's current Weebly site: mission statement, service times,
+  pastor, address, phone, and Zoom worship link.
+- Tooling config in `deno.json` (`start`/`dev` tasks, import map, `fmt`/`lint` rules).
+- `README.md` documenting architecture, request flow, and how to extend the site.
+
+### Notes
+
+- `CONTACT.email` in `src/content.ts` is a best-effort value — the public address was not fully
+  visible when sourcing; verify before launch.

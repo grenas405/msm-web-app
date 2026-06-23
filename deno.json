@@ -1,0 +1,22 @@
+{
+  "name": "msm-web-app",
+  "version": "1.0.0",
+  "exports": "./main.ts",
+  "tasks": {
+    "start": "deno run --allow-net --allow-read --allow-env main.ts",
+    "dev": "deno run --watch --allow-net --allow-read --allow-env main.ts"
+  },
+  "imports": {
+    "@std/http": "jsr:@std/http@^1.0.13"
+  },
+  "fmt": {
+    "lineWidth": 100,
+    "semiColons": true,
+    "singleQuote": false
+  },
+  "lint": {
+    "rules": {
+      "tags": ["recommended"]
+    }
+  }
+}

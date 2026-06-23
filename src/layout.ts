@@ -1,0 +1,132 @@
+// layout.ts — The page shell: <head>, header/nav, footer.
+// One function, `page()`, wraps any body content in the full document.
+
+import { html, raw } from "./html.ts";
+import { CONTACT, NAV, SITE } from "./content.ts";
+import { icon } from "./icons.ts";
+
+export interface PageOptions {
+  title: string;
+  description: string;
+  path: string;
+  body: string;
+}
+
+/** Build the navigation links, marking the current page. */
+function nav(currentPath: string): string {
+  const links = NAV.map((item) => {
+    const cls = item.href === currentPath ? "active" : "";
+    return html`
+      <a class="${cls}" href="${item.href}">${item.label}</a>
+    `;
+  });
+  return links.join("");
+}
+
+/** Render a complete HTML document. */
+export function page(opts: PageOptions): string {
+  const fullTitle = opts.path === "/"
+    ? `${SITE.name} — ${SITE.tagline}`
+    : `${opts.title} · ${SITE.name}`;
+
+  const document = html`
+    <!DOCTYPE html>
+    <html lang="en">
+      <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="description" content="${opts.description}">
+        <meta name="theme-color" content="#0b1f3a">
+        <meta property="og:title" content="${fullTitle}">
+        <meta property="og:description" content="${opts.description}">
+        <meta property="og:type" content="website">
+        <title>${fullTitle}</title>
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link
+          rel="stylesheet"
+          href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap"
+        >
+        <link rel="stylesheet" href="/static/styles.css">
+        <link rel="icon" href="/static/favicon.svg" type="image/svg+xml">
+      </head>
+      <body>
+        <a class="skip-link" href="#main">Skip to content</a>
+        <header class="site-header" data-header>
+          <div class="container header-inner">
+            <a class="brand" href="/">
+              <span class="brand-mark">${icon("flame")}</span>
+              <span class="brand-text">
+                <span class="brand-name">${SITE.name}</span>
+                <span class="brand-tag">${SITE.tagline}</span>
+              </span>
+            </a>
+            <nav class="site-nav" aria-label="Primary">
+              ${raw(nav(opts.path))}
+            </nav>
+            <a class="btn btn-sm header-cta" href="/contact">Plan a Visit</a>
+            <button class="nav-toggle" data-nav-toggle aria-label="Toggle menu" aria-expanded="false">
+              <span></span><span></span><span></span>
+            </button>
+          </div>
+          <nav class="mobile-nav" data-mobile-nav aria-label="Mobile">
+            ${raw(nav(opts.path))}
+            <a class="btn header-cta" href="/contact">Plan a Visit</a>
+          </nav>
+        </header>
+
+        <main id="main">
+          ${raw(opts.body)}
+        </main>
+
+        <footer class="site-footer">
+          <div class="container footer-grid">
+            <div class="footer-brand">
+              <span class="brand-mark">${icon("flame")}</span>
+              <div>
+                <p class="footer-name">${SITE.name}</p>
+                <p class="footer-mission">${SITE.mission}</p>
+              </div>
+            </div>
+            <div class="footer-col">
+              <h3>Visit</h3>
+              <p>
+                ${CONTACT.address.line1}<br>${CONTACT.address.detail}<br>
+                ${CONTACT.address.city}, ${CONTACT.address.state} ${CONTACT.address.zip}
+              </p>
+            </div>
+            <div class="footer-col">
+              <h3>Connect</h3>
+              <p>
+                <a href="${CONTACT.phoneHref}">${CONTACT.phone}</a><br>
+                <a href="mailto:${CONTACT.email}">${CONTACT.email}</a>
+              </p>
+            </div>
+            <div class="footer-col">
+              <h3>Gather</h3>
+              <nav class="footer-links" aria-label="Footer">
+                ${raw(
+                  NAV.map((i) =>
+                    html`
+                      <a href="${i.href}">${i.label}</a>
+                    `
+                  ).join(""),
+                )}
+              </nav>
+            </div>
+          </div>
+          <div class="container footer-bottom">
+            <p>&copy; ${new Date().getFullYear()} ${SITE.name} — ${SITE
+              .tagline}. All rights reserved.</p>
+            <p>${SITE.mission}</p>
+          </div>
+        </footer>
+
+        <script src="/static/app.js" defer></script>
+      </body>
+    </html>
+  `;
+
+  // Trim formatter-introduced indentation so the doc starts at <!DOCTYPE html>.
+  return document.trim();
+}
