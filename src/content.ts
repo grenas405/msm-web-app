@@ -117,7 +117,38 @@ export const NAV: NavItem[] = [
   { label: "Contact", href: "/contact" },
 ];
 
-export const SCRIPTURE = {
-  text: "And there I will meet with thee, and I will commune with thee from above the mercy seat.",
-  reference: "Exodus 25:22",
-} as const;
+export interface Verse {
+  text: string;
+  reference: string;
+}
+
+// The primary banner verse. In Christ, the mercy seat of the old covenant becomes
+// the throne of grace we are invited to approach — the heart of this ministry.
+export const SCRIPTURE: Verse = {
+  text:
+    "Let us then approach God's throne of grace with confidence, so that we may receive mercy and find grace to help us in our time of need.",
+  reference: "Hebrews 4:16",
+};
+
+// Additional New Testament promises woven through the landing page.
+export const VERSES: Verse[] = [
+  {
+    text: "Come to me, all you who are weary and burdened, and I will give you rest.",
+    reference: "Matthew 11:28",
+  },
+  {
+    text: "If anyone is in Christ, the new creation has come: the old has gone, the new is here!",
+    reference: "2 Corinthians 5:17",
+  },
+  {
+    text: "For it is by grace you have been saved, through faith — and this is the gift of God.",
+    reference: "Ephesians 2:8",
+  },
+];
+
+// A short, rotating banner verse used to close interior pages.
+export const BENEDICTION: Verse = {
+  text:
+    "Now to him who is able to do immeasurably more than all we ask or imagine, according to his power that is at work within us — to him be glory.",
+  reference: "Ephesians 3:20–21",
+};

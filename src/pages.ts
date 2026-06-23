@@ -4,20 +4,42 @@
 import { html, raw } from "./html.ts";
 import { page } from "./layout.ts";
 import { icon } from "./icons.ts";
-import { CONTACT, PILLARS, SCRIPTURE, SERVICES, SITE } from "./content.ts";
+import {
+  BENEDICTION,
+  CONTACT,
+  PILLARS,
+  SCRIPTURE,
+  SERVICES,
+  SITE,
+  type Verse,
+  VERSES,
+} from "./content.ts";
 
 // ── Shared section builders ───────────────────────────────────────────────
 
-/** A decorative scripture banner used across pages. */
-function scriptureBanner(): string {
+/** A decorative scripture banner. Pass any verse; defaults to the primary one. */
+function scriptureBanner(verse: Verse = SCRIPTURE): string {
   return html`
     <section class="scripture">
       <div class="container">
-        <p class="scripture-text">&ldquo;${SCRIPTURE.text}&rdquo;</p>
-        <p class="scripture-ref">— ${SCRIPTURE.reference}</p>
+        <p class="scripture-text">&ldquo;${verse.text}&rdquo;</p>
+        <p class="scripture-ref">— ${verse.reference}</p>
       </div>
     </section>
   `;
+}
+
+/** A grid of New Testament promise cards. */
+function verseCards(): string {
+  const cards = VERSES.map((v) =>
+    html`
+      <blockquote class="verse-card">
+        <p class="verse-text">${v.text}</p>
+        <cite class="verse-ref">${v.reference}</cite>
+      </blockquote>
+    `
+  ).join("");
+  return raw(cards).value;
 }
 
 /** Compact list of weekly services for reuse. */
@@ -73,8 +95,11 @@ export function home(): string {
       <div class="hero-overlay"></div>
       <div class="container hero-content">
         <p class="eyebrow">Welcome to ${SITE.name}</p>
-        <h1 class="hero-title">A place to meet<br><em>with God.</em></h1>
-        <p class="hero-lead">${SITE.mission}</p>
+        <h1 class="hero-title">Come and find<br><em>grace and rest.</em></h1>
+        <p class="hero-lead">
+          No matter where you've been or what you carry, there is mercy waiting for you here. Come as
+          you are, meet the living God, and discover the life He has for you.
+        </p>
         <div class="hero-actions">
           <a class="btn btn-light" href="/services">Join Us This Week</a>
           <a class="btn btn-outline-light" href="/about">Who We Are ${raw(icon("arrow").value)}</a>
@@ -92,10 +117,12 @@ export function home(): string {
           <h2>A vibrant, Christ-centered church in Oklahoma City.</h2>
           <p class="lead">${SITE.description}</p>
           <p>
-            Whether you are exploring faith for the first time or have walked with Jesus for decades,
-            there is a seat for you here. We gather around the Word, the presence of the Holy Spirit,
-            and a love for our city.
+            Whether you are exploring faith for the very first time or have walked with Jesus for
+            decades, there is a seat for you here. We are a family being changed by grace — gathering
+            around the Word, welcoming the presence of the Holy Spirit, and carrying His love into our
+            city and beyond.
           </p>
+          <p class="mission-quote">${SITE.mission}</p>
           <a class="link-arrow" href="/about">Read our story ${raw(icon("arrow").value)}</a>
         </div>
         <div class="welcome-pillars">${raw(pillars)}</div>
@@ -103,6 +130,20 @@ export function home(): string {
     </section>
 
     <section class="section section-tint">
+      <div class="container">
+        <div class="section-head">
+          <p class="eyebrow">Promises to Stand On</p>
+          <h2>His Word, our hope.</h2>
+          <p class="section-lead">
+            The same God who met His people above the mercy seat now invites us, in Christ, to His
+            throne of grace. These are the promises we build our lives upon.
+          </p>
+        </div>
+        <div class="verse-grid">${raw(verseCards())}</div>
+      </div>
+    </section>
+
+    <section class="section">
       <div class="container">
         <div class="section-head">
           <p class="eyebrow">Gather With Us</p>
@@ -379,7 +420,7 @@ export function contact(): string {
       </div>
     </section>
 
-    ${raw(scriptureBanner())}
+    ${raw(scriptureBanner(BENEDICTION))}
   `;
 
   return page({

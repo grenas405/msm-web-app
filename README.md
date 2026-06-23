@@ -47,8 +47,8 @@ static/
 1. `main.ts` receives the request. `/static/*` is served by `@std/http`'s `serveDir`.
 2. Everything else is passed to `route(pathname)` in `src/router.ts`.
 3. The router looks up the path in its table and calls the matching page builder.
-4. The page builder composes section helpers + `content.ts` data through the `html`
-   tagged template, then wraps the result in `layout.page()`.
+4. The page builder composes section helpers + `content.ts` data through the `html` tagged template,
+   then wraps the result in `layout.page()`.
 5. A `Response` with `text/html` is returned. Unknown paths render the 404 page.
 
 ### Adding a page

@@ -2,14 +2,31 @@
 
 All notable changes to the Mercy Seat Ministries web app are documented here.
 
+## [1.1.0] — 2026-06-23
+
+### Changed
+
+- **Replaced the Exodus 25:22 banner verse with Hebrews 4:16** ("approach God's throne
+  of grace... receive mercy") — the New Testament fulfillment of the mercy seat in Christ.
+- **More inspiring landing copy.** New hero headline ("Come and find grace and rest") and
+  a warmer, invitation-focused welcome section, with the mission statement set as a quote.
+
+### Added
+
+- **"Promises to Stand On" verse section** on the home page with three New Testament
+  promises (Matthew 11:28, 2 Corinthians 5:17, Ephesians 2:8) as styled scripture cards.
+- **Benediction verse** (Ephesians 3:20–21) closing the Contact page for variety.
+- New `Verse` type plus `VERSES` and `BENEDICTION` exports in `content.ts`; the scripture
+  banner now accepts any verse. Styles for verse cards, the mission quote, and section lead.
+
 ## [1.0.1] — 2026-06-23
 
 ### Fixed
 
 - **Static assets now serve on Windows.** `STATIC_ROOT` previously used
-  `new URL("./static", import.meta.url).pathname`, which yields an invalid leading-slash
-  path on Windows (`/C:/...`) and caused all `/static/*` assets to 404. It now uses
-  `import.meta.dirname`, which is a native OS path on every platform.
+  `new URL("./static", import.meta.url).pathname`, which yields an invalid leading-slash path on
+  Windows (`/C:/...`) and caused all `/static/*` assets to 404. It now uses `import.meta.dirname`,
+  which is a native OS path on every platform.
 
 ## [1.0.0] — 2026-06-23
 
