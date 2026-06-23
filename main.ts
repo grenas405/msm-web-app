@@ -8,7 +8,11 @@
 import { serveDir } from "@std/http/file-server";
 import { route } from "./src/router.ts";
 
-const STATIC_ROOT = new URL("./static", import.meta.url).pathname;
+// import.meta.dirname is the directory of this module as a native OS path,
+// so this resolves correctly on Windows (C:\...) as well as POSIX. Using
+// new URL(...).pathname would prepend a leading slash on Windows ("/C:/...")
+// and break asset reads.
+const STATIC_ROOT = `${import.meta.dirname}/static`;
 const PORT = Number(Deno.env.get("PORT") ?? 8000);
 
 /** Route a single request to static files or the page router. */

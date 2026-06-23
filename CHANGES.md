@@ -2,6 +2,15 @@
 
 All notable changes to the Mercy Seat Ministries web app are documented here.
 
+## [1.0.1] — 2026-06-23
+
+### Fixed
+
+- **Static assets now serve on Windows.** `STATIC_ROOT` previously used
+  `new URL("./static", import.meta.url).pathname`, which yields an invalid leading-slash
+  path on Windows (`/C:/...`) and caused all `/static/*` assets to 404. It now uses
+  `import.meta.dirname`, which is a native OS path on every platform.
+
 ## [1.0.0] — 2026-06-23
 
 Initial release. A complete, server-rendered website for Mercy Seat Ministries OKC.
