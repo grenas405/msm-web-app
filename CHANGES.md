@@ -2,6 +2,14 @@
 
 All notable changes to the Mercy Seat Ministries web app are documented here.
 
+## [1.5.1] — 2026-06-23
+
+### Added
+
+- **Database reset script** (`deno task reset`) — clears Prayer Wall requests and sessions (sample
+  requests re-seed on next start) while keeping the admin password. Pass `--all` to also remove the
+  password for a full wipe. Documented alongside the file-delete method.
+
 ## [1.5.0] — 2026-06-23
 
 ### Changed

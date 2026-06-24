@@ -5,7 +5,8 @@
   "tasks": {
     "start": "deno run --unstable-kv --allow-net --allow-read --allow-write --allow-env main.ts",
     "dev": "deno run --watch --unstable-kv --allow-net --allow-read --allow-write --allow-env main.ts",
-    "set-password": "deno run --unstable-kv --allow-read --allow-write --allow-env scripts/set-password.ts"
+    "set-password": "deno run --unstable-kv --allow-read --allow-write --allow-env scripts/set-password.ts",
+    "reset": "deno run --unstable-kv --allow-read --allow-write --allow-env scripts/reset-db.ts"
   },
   "imports": {
     "@std/http": "jsr:@std/http@^1.0.13"

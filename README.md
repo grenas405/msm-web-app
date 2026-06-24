@@ -116,6 +116,31 @@ MSM_KV_PATH=./data/msm.db deno task set-password
 MSM_KV_PATH=./data/msm.db deno task start
 ```
 
+### Resetting the database
+
+Stop the server first (the local KV is single-writer), then:
+
+```sh
+deno task reset          # clear prayers + sessions; sample requests re-seed on
+                         # next start. Keeps the admin password.
+deno task reset --all    # also remove the admin password (full wipe)
+```
+
+On Windows PowerShell, prefix with the same `MSM_KV_PATH` you run the server with:
+
+```powershell
+$env:MSM_KV_PATH="./data/msm.db"; deno task reset
+```
+
+Alternatively, if you pinned `MSM_KV_PATH` to a file, you can just delete that file (and its
+`-shm`/`-wal` siblings) while the server is stopped:
+
+```powershell
+Remove-Item ./data/msm.db*       # PowerShell
+```
+
+This gives a completely fresh store — prayers re-seed and you'll set a new password.
+
 ## Quality
 
 ```sh
