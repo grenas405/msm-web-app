@@ -1,10 +1,11 @@
 {
   "name": "msm-web-app",
-  "version": "1.3.0",
+  "version": "1.4.0",
   "exports": "./main.ts",
   "tasks": {
     "start": "deno run --unstable-kv --allow-net --allow-read --allow-write --allow-env main.ts",
-    "dev": "deno run --watch --unstable-kv --allow-net --allow-read --allow-write --allow-env main.ts"
+    "dev": "deno run --watch --unstable-kv --allow-net --allow-read --allow-write --allow-env main.ts",
+    "set-password": "deno run --unstable-kv --allow-read --allow-write --allow-env scripts/set-password.ts"
   },
   "imports": {
     "@std/http": "jsr:@std/http@^1.0.13"

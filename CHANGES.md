@@ -2,6 +2,33 @@
 
 All notable changes to the Mercy Seat Ministries web app are documented here.
 
+## [1.4.0] — 2026-06-23
+
+### Added
+
+- **Admin authentication.** A real sign-in replaces the old `?admin=KEY` query trick:
+  - `scripts/set-password.ts` (`deno task set-password`) sets the admin password, hashed with
+    **PBKDF2-HMAC-SHA-256** (Web Crypto — no new deps) and stored in Deno KV. Supports hidden
+    interactive entry or a non-interactive argument.
+  - **`/admin/login`** — password form. Mints a random session token stored in KV with a 7-day TTL,
+    returned as an **HttpOnly, SameSite=Strict** cookie (Secure on https).
+  - **`/admin`** — protected dashboard to manage the Prayer Wall (stats + "Mark answered"), plus
+    sign-out. Redirects to the login page when not authenticated.
+  - The login page is **not linked anywhere** on the public site and is marked `noindex`.
+- **`src/auth.ts`** (password hashing, sessions, cookie helpers, constant-time compare) and
+  **`src/kv.ts`** (one shared KV handle; honors `MSM_KV_PATH` to pin the database).
+
+### Changed
+
+- Mark-answered moved off the public Prayer Wall into the protected `/admin` dashboard; the public
+  wall no longer accepts an `?admin` key. `page()` gained a `bare` mode (no public header/footer,
+  `noindex`) used by the admin screens.
+
+### Security
+
+- Passwords are never stored in plaintext; password checks are constant-time. Sessions are revoked
+  on logout. POST bodies are parsed defensively.
+
 ## [1.3.1] — 2026-06-23
 
 ### Added

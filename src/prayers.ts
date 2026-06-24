@@ -2,8 +2,7 @@
 // requests via Deno KV. Pure, explicit functions — no HTML, no HTTP.
 
 import { PRAYER_CATEGORIES } from "./content.ts";
-
-const kv = await Deno.openKv();
+import { kv } from "./kv.ts";
 
 const PRAYERS = "prayers";
 const SEEDED = "prayers_seeded";

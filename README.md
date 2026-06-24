@@ -34,9 +34,13 @@ src/
   html.ts          Safe HTML templating: escape(), html`` tagged template, raw()
   icons.ts         Inline SVG icon set; icon(name) -> trusted SVG
   layout.ts        The page shell: <head>, header/nav, footer  (page())
-  pages.ts         One explicit function per page (home, about, services, …)
+  pages.ts         One explicit function per page (home, …, prayer wall, admin)
   prayers.ts       Prayer Wall data layer — persists requests in Deno KV
-  router.ts        Dispatcher: GET pages + Prayer Wall GET/POST endpoints
+  auth.ts          Admin auth: PBKDF2 password hashing, sessions, cookies
+  kv.ts            The single shared Deno KV handle (honors MSM_KV_PATH)
+  router.ts        Dispatcher: GET pages + Prayer Wall + Admin GET/POST endpoints
+scripts/
+  set-password.ts  CLI to set/change the admin password (deno task set-password)
 static/
   styles.css       The full design system (navy + gold on ivory)
   app.js           Progressive enhancement (nav, sticky header, reveals, pray button)
@@ -79,12 +83,37 @@ so the wall is never empty).
 
 - **Works without JavaScript** — forms POST and the server replies with a 303 redirect. With JS, the
   "I prayed" button updates the count in place and remembers your taps.
-- **Pastor / admin view:** visit `/prayer-wall?admin=KEY` to reveal "Mark answered" controls. Set
-  the key with the `PRAYER_ADMIN_KEY` environment variable (default `pastor` — **change this before
-  going live**).
+- **Management** (marking requests answered) happens in the password-protected [Admin](#admin) area,
+  not on the public wall.
+
+## Admin
+
+Prayer Wall management lives behind a password-protected admin area. **The login page is
+intentionally not linked anywhere** — the site manager navigates directly to it.
+
+**1. Set a password** (do this before starting the server — the local KV is single-writer):
 
 ```sh
-PRAYER_ADMIN_KEY=your-secret deno task start
+deno task set-password            # prompts, input hidden
+# or, non-interactively:
+deno task set-password "a-strong-passphrase"
+```
+
+**2. Sign in** at **`/admin/login`** → you land on **`/admin`**, where you can see the stats and
+mark requests as answered (which moves them to the public testimonies).
+
+How it works:
+
+- The password is hashed with **PBKDF2-HMAC-SHA-256** and stored in Deno KV — never in plaintext.
+  Sign-in mints a random **HttpOnly, SameSite=Strict** session cookie (7-day TTL; `Secure` is added
+  automatically over https). Sign-out revokes the session.
+- **Local persistence:** set `MSM_KV_PATH` to a file so the `set-password` script and the server
+  share one store, e.g. `MSM_KV_PATH=./data/msm.db`. On Deno Deploy, leave it unset to use the
+  managed KV.
+
+```sh
+MSM_KV_PATH=./data/msm.db deno task set-password
+MSM_KV_PATH=./data/msm.db deno task start
 ```
 
 ## Quality
@@ -111,6 +140,6 @@ The app requests the minimum Deno permissions:
 
 - `--allow-net` — to serve HTTP
 - `--allow-read` — to read static assets and the Deno KV store
-- `--allow-write` — to persist Prayer Wall requests in Deno KV
-- `--allow-env` — to read `PORT` and `PRAYER_ADMIN_KEY`
-- `--unstable-kv` — enables Deno KV (used by the Prayer Wall)
+- `--allow-write` — to persist Prayer Wall requests, the admin password, and sessions
+- `--allow-env` — to read `PORT` and `MSM_KV_PATH`
+- `--unstable-kv` — enables Deno KV (Prayer Wall + admin auth)

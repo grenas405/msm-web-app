@@ -482,8 +482,6 @@ export interface PrayerWallView {
   active: Prayer[];
   answered: Prayer[];
   stats: PrayerStats;
-  isAdmin: boolean;
-  adminKey: string | null;
 }
 
 /** Human-friendly relative time, e.g. "3 hours ago". */
@@ -523,22 +521,9 @@ function statTile(value: number, label: string, ic: string): string {
   `;
 }
 
-/** Render one active prayer request card. */
-function prayerCard(p: Prayer, view: PrayerWallView): string {
+/** Render one active prayer request card for the public wall. */
+function prayerCard(p: Prayer): string {
   const who = p.name ? p.name : "Anonymous";
-  const adminAction = view.isAdmin
-    ? html`
-      <form class="answer-form" method="post" action="/prayer-wall/answer?admin=${encodeURIComponent(
-        view.adminKey ?? "",
-      )}">
-        <input type="hidden" name="id" value="${p.id}">
-        <button class="answer-btn" type="submit">
-          ${raw(icon("check").value)} Mark answered
-        </button>
-      </form>
-    `
-    : "";
-
   return html`
     <article class="prayer-card" data-id="${p.id}">
       <div class="prayer-top">
@@ -557,7 +542,6 @@ function prayerCard(p: Prayer, view: PrayerWallView): string {
           </button>
         </form>
       </div>
-      ${raw(adminAction)}
     </article>
   `;
 }
@@ -590,7 +574,7 @@ export function prayerWall(view: PrayerWallView): string {
   const activeList = view.active.length > 0
     ? html`
       <div class="prayer-grid">
-        ${raw(view.active.map((p) => prayerCard(p, view)).join(""))}
+        ${raw(view.active.map((p) => prayerCard(p)).join(""))}
       </div>
     `
     : html`
@@ -694,5 +678,139 @@ export function prayerWall(view: PrayerWallView): string {
       "Share a prayer request with Mercy Seat Ministries OKC and join the church in praying for one another. Read testimonies of answered prayer.",
     path: "/prayer-wall",
     body,
+  });
+}
+
+// ── Admin ─────────────────────────────────────────────────────────────────
+
+export interface AdminLoginView {
+  error: string | null;
+  configured: boolean;
+}
+
+/** The admin sign-in page. Not linked anywhere on the public site. */
+export function adminLogin(view: AdminLoginView): string {
+  const alert = view.error
+    ? html`
+      <p class="admin-alert" role="alert">${view.error}</p>
+    `
+    : "";
+
+  const form = view.configured
+    ? html`
+      <form method="post" action="/admin/login" class="admin-form">
+        ${raw(alert)}
+        <label>
+          <span>Password</span>
+          <input type="password" name="password" autocomplete="current-password" autofocus required>
+        </label>
+        <button class="btn btn-lg" type="submit">${raw(icon("flame").value)} Sign in</button>
+      </form>
+    `
+    : html`
+      <div class="admin-form">
+        <p class="admin-alert" role="alert">
+          No admin password is set yet. Run
+          <code>deno task set-password</code> on the server, then reload this page.
+        </p>
+      </div>
+    `;
+
+  const body = html`
+    <section class="admin-auth">
+      <div class="admin-card">
+        <span class="admin-mark">${raw(icon("flame").value)}</span>
+        <h1>${SITE.name}</h1>
+        <p class="admin-sub">Site administration</p>
+        ${raw(form)}
+      </div>
+    </section>
+  `;
+
+  return page({
+    title: "Admin Login",
+    description: "Administrator sign-in.",
+    path: "/admin/login",
+    body,
+    bare: true,
+  });
+}
+
+export interface AdminDashboardView {
+  active: Prayer[];
+  answered: Prayer[];
+  stats: PrayerStats;
+}
+
+/** One manageable request row in the admin dashboard. */
+function adminRow(p: Prayer): string {
+  const who = p.name ? p.name : "Anonymous";
+  return html`
+    <article class="admin-row">
+      <div class="admin-row-main">
+        <div class="prayer-top">
+          <span class="chip">${p.category}</span>
+          <span class="prayer-time">${raw(timeAgo(p.createdAt))} · ${p.prayedCount} prayed</span>
+        </div>
+        <p class="prayer-body">${p.body}</p>
+        <span class="prayer-who">${raw(icon("users").value)} ${who}</span>
+      </div>
+      <form method="post" action="/admin/answer" class="admin-row-action">
+        <input type="hidden" name="id" value="${p.id}">
+        <button class="btn btn-sm" type="submit">${raw(icon("check").value)} Mark answered</button>
+      </form>
+    </article>
+  `;
+}
+
+/** The protected admin dashboard for managing the Prayer Wall. */
+export function adminDashboard(view: AdminDashboardView): string {
+  const rows = view.active.length > 0
+    ? html`
+      <div class="admin-list">${raw(view.active.map(adminRow).join(""))}</div>
+    `
+    : html`
+      <p class="empty-note">No active requests to manage right now.</p>
+    `;
+
+  const body = html`
+    <section class="admin-shell">
+      <div class="container">
+        <header class="admin-bar">
+          <div>
+            <p class="eyebrow">Administration</p>
+            <h1>Prayer Wall</h1>
+          </div>
+          <div class="admin-bar-actions">
+            <a class="btn btn-sm btn-outline" href="/prayer-wall" target="_blank" rel="noopener">
+              View wall ${raw(icon("arrow").value)}
+            </a>
+            <form method="post" action="/admin/logout">
+              <button class="btn btn-sm" type="submit">Sign out</button>
+            </form>
+          </div>
+        </header>
+
+        <div class="stat-row admin-stats">
+          ${raw(statTile(view.stats.requests, "Requests shared", "hands"))} ${raw(
+            statTile(view.stats.prayersOffered, "Prayers offered", "heart"),
+          )} ${raw(statTile(view.stats.answered, "Prayers answered", "check"))}
+        </div>
+
+        <div class="section-head feed-head admin-section-head">
+          <h2>Active requests</h2>
+          <p class="section-lead">Mark a request answered to move it to the testimonies.</p>
+        </div>
+        ${raw(rows)}
+      </div>
+    </section>
+  `;
+
+  return page({
+    title: "Admin",
+    description: "Prayer Wall administration.",
+    path: "/admin",
+    body,
+    bare: true,
   });
 }

@@ -10,6 +10,8 @@ export interface PageOptions {
   description: string;
   path: string;
   body: string;
+  /** When true, omit the public header/footer and mark the page noindex. */
+  bare?: boolean;
 }
 
 /** Build the navigation links, marking the current page. */
@@ -29,6 +31,11 @@ export function page(opts: PageOptions): string {
     ? `${SITE.name} — ${SITE.tagline}`
     : `${opts.title} · ${SITE.name}`;
 
+  const robots = opts.bare ? `<meta name="robots" content="noindex,nofollow">` : "";
+  const header = opts.bare ? "" : siteHeader(opts.path);
+  const footer = opts.bare ? "" : siteFooter();
+  const skip = opts.bare ? "" : `<a class="skip-link" href="#main">Skip to content</a>`;
+
   const document = html`
     <!DOCTYPE html>
     <html lang="en">
@@ -37,6 +44,7 @@ export function page(opts: PageOptions): string {
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="description" content="${opts.description}">
         <meta name="theme-color" content="#0b1f3a">
+        ${raw(robots)}
         <meta property="og:title" content="${fullTitle}">
         <meta property="og:description" content="${opts.description}">
         <meta property="og:type" content="website">
@@ -51,76 +59,13 @@ export function page(opts: PageOptions): string {
         <link rel="icon" href="/static/favicon.svg" type="image/svg+xml">
       </head>
       <body>
-        <a class="skip-link" href="#main">Skip to content</a>
-        <header class="site-header" data-header>
-          <div class="container header-inner">
-            <a class="brand" href="/">
-              <span class="brand-mark">${icon("flame")}</span>
-              <span class="brand-text">
-                <span class="brand-name">${SITE.name}</span>
-                <span class="brand-tag">${SITE.tagline}</span>
-              </span>
-            </a>
-            <nav class="site-nav" aria-label="Primary">
-              ${raw(nav(opts.path))}
-            </nav>
-            <a class="btn btn-sm header-cta" href="/contact">Plan a Visit</a>
-            <button class="nav-toggle" data-nav-toggle aria-label="Toggle menu" aria-expanded="false">
-              <span></span><span></span><span></span>
-            </button>
-          </div>
-          <nav class="mobile-nav" data-mobile-nav aria-label="Mobile">
-            ${raw(nav(opts.path))}
-            <a class="btn header-cta" href="/contact">Plan a Visit</a>
-          </nav>
-        </header>
+        ${raw(skip)} ${raw(header)}
 
         <main id="main">
           ${raw(opts.body)}
         </main>
 
-        <footer class="site-footer">
-          <div class="container footer-grid">
-            <div class="footer-brand">
-              <span class="brand-mark">${icon("flame")}</span>
-              <div>
-                <p class="footer-name">${SITE.name}</p>
-                <p class="footer-mission">${SITE.mission}</p>
-              </div>
-            </div>
-            <div class="footer-col">
-              <h3>Visit</h3>
-              <p>
-                ${CONTACT.address.line1}<br>${CONTACT.address.detail}<br>
-                ${CONTACT.address.city}, ${CONTACT.address.state} ${CONTACT.address.zip}
-              </p>
-            </div>
-            <div class="footer-col">
-              <h3>Connect</h3>
-              <p>
-                <a href="${CONTACT.phoneHref}">${CONTACT.phone}</a><br>
-                <a href="mailto:${CONTACT.email}">${CONTACT.email}</a>
-              </p>
-            </div>
-            <div class="footer-col">
-              <h3>Gather</h3>
-              <nav class="footer-links" aria-label="Footer">
-                ${raw(
-                  NAV.map((i) =>
-                    html`
-                      <a href="${i.href}">${i.label}</a>
-                    `
-                  ).join(""),
-                )}
-              </nav>
-            </div>
-          </div>
-          <div class="container footer-bottom">
-            <p>&copy; ${new Date().getFullYear()} ${SITE.name} — ${SITE
-              .tagline}. All rights reserved.</p>
-            <p>${SITE.mission}</p>
-          </div>
-        </footer>
+        ${raw(footer)}
 
         <script src="/static/app.js" defer></script>
       </body>
@@ -129,4 +74,80 @@ export function page(opts: PageOptions): string {
 
   // Trim formatter-introduced indentation so the doc starts at <!DOCTYPE html>.
   return document.trim();
+}
+
+/** The public site header with primary + mobile navigation. */
+function siteHeader(path: string): string {
+  return html`
+    <header class="site-header" data-header>
+      <div class="container header-inner">
+        <a class="brand" href="/">
+          <span class="brand-mark">${icon("flame")}</span>
+          <span class="brand-text">
+            <span class="brand-name">${SITE.name}</span>
+            <span class="brand-tag">${SITE.tagline}</span>
+          </span>
+        </a>
+        <nav class="site-nav" aria-label="Primary">
+          ${raw(nav(path))}
+        </nav>
+        <a class="btn btn-sm header-cta" href="/contact">Plan a Visit</a>
+        <button class="nav-toggle" data-nav-toggle aria-label="Toggle menu" aria-expanded="false">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+      <nav class="mobile-nav" data-mobile-nav aria-label="Mobile">
+        ${raw(nav(path))}
+        <a class="btn header-cta" href="/contact">Plan a Visit</a>
+      </nav>
+    </header>
+  `;
+}
+
+/** The public site footer. */
+function siteFooter(): string {
+  return html`
+    <footer class="site-footer">
+      <div class="container footer-grid">
+        <div class="footer-brand">
+          <span class="brand-mark">${icon("flame")}</span>
+          <div>
+            <p class="footer-name">${SITE.name}</p>
+            <p class="footer-mission">${SITE.mission}</p>
+          </div>
+        </div>
+        <div class="footer-col">
+          <h3>Visit</h3>
+          <p>
+            ${CONTACT.address.line1}<br>${CONTACT.address.detail}<br>
+            ${CONTACT.address.city}, ${CONTACT.address.state} ${CONTACT.address.zip}
+          </p>
+        </div>
+        <div class="footer-col">
+          <h3>Connect</h3>
+          <p>
+            <a href="${CONTACT.phoneHref}">${CONTACT.phone}</a><br>
+            <a href="mailto:${CONTACT.email}">${CONTACT.email}</a>
+          </p>
+        </div>
+        <div class="footer-col">
+          <h3>Gather</h3>
+          <nav class="footer-links" aria-label="Footer">
+            ${raw(
+              NAV.map((i) =>
+                html`
+                  <a href="${i.href}">${i.label}</a>
+                `
+              ).join(""),
+            )}
+          </nav>
+        </div>
+      </div>
+      <div class="container footer-bottom">
+        <p>&copy; ${new Date().getFullYear()} ${SITE.name} — ${SITE
+          .tagline}. All rights reserved.</p>
+        <p>${SITE.mission}</p>
+      </div>
+    </footer>
+  `;
 }
