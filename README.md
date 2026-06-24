@@ -100,7 +100,9 @@ deno task set-password "a-strong-passphrase"
 ```
 
 **2. Sign in** at **`/admin/login`** → you land on **`/admin`**, where you can see the stats and
-mark requests as answered (which moves them to the public testimonies).
+mark requests as answered. When marking one answered, the pastor can record a **praise report**
+("what did God do?") — it becomes the headline of the public testimony. The dashboard also greets
+the pastor by name and cycles encouraging scriptures with a typing animation.
 
 How it works:
 

@@ -138,7 +138,7 @@ async function handlePost(request: Request, url: URL, path: string): Promise<Res
 
   if (path === "/admin/answer") {
     if (!(await isAuthed(request))) return redirect("/admin/login");
-    await markAnswered(String(form.get("id") ?? ""));
+    await markAnswered(String(form.get("id") ?? ""), String(form.get("outcome") ?? ""));
     return redirect("/admin");
   }
 

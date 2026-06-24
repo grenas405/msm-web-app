@@ -92,3 +92,63 @@
     });
   });
 })();
+
+(function shepherdVerses() {
+  const el = document.querySelector(".admin-verse[data-verses]");
+  if (!el) return;
+
+  // Respect reduced-motion: leave the server-rendered verse in place.
+  if (globalThis.matchMedia?.("(prefers-reduced-motion: reduce)").matches) return;
+
+  let verses;
+  try {
+    verses = JSON.parse(el.dataset.verses);
+  } catch {
+    return;
+  }
+  if (!Array.isArray(verses) || verses.length < 2) return;
+
+  const typedEl = el.querySelector(".admin-verse-typed");
+  const refEl = el.querySelector(".admin-verse-refname");
+  if (!typedEl || !refEl) return;
+
+  const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+  // Hold long enough to read comfortably: a base pause plus time per character.
+  const holdFor = (text) => 3400 + text.length * 45;
+
+  async function type(text) {
+    el.classList.add("is-typing");
+    for (let i = 1; i <= text.length; i++) {
+      typedEl.textContent = text.slice(0, i);
+      await sleep(26 + Math.random() * 34);
+    }
+    el.classList.remove("is-typing");
+  }
+
+  async function erase() {
+    el.classList.add("is-typing");
+    const text = typedEl.textContent;
+    for (let i = text.length; i >= 0; i--) {
+      typedEl.textContent = text.slice(0, i);
+      await sleep(11);
+    }
+  }
+
+  async function run() {
+    // Start from whichever verse the server rendered, then cycle onward.
+    let i = verses.findIndex((v) => v.reference === refEl.textContent.trim());
+    if (i < 0) i = 0;
+    await sleep(holdFor(verses[i].text));
+    while (true) {
+      await erase();
+      refEl.textContent = "";
+      i = (i + 1) % verses.length;
+      const v = verses[i];
+      await type(v.text);
+      refEl.textContent = v.reference;
+      await sleep(holdFor(v.text));
+    }
+  }
+
+  run();
+})();

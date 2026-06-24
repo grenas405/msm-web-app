@@ -2,6 +2,19 @@
 
 All notable changes to the Mercy Seat Ministries web app are documented here.
 
+## [1.6.0] — 2026-06-23
+
+### Added
+
+- **Praise reports on answered prayers.** Marking a request answered now opens a field for the
+  pastor to record _what God did_. The outcome is shown as the headline of the public testimony
+  (with the original request as context) and on the admin "Recently answered" cards. Stored as a new
+  `outcome` field on each prayer (older records fall back to the request body).
+- **Animated shepherd's scriptures.** The dashboard verse banner now types a verse out character by
+  character, holds long enough to read, then erases and types the next — cycling through an expanded
+  set of 11 encouragements. Honors `prefers-reduced-motion` (renders one static verse) and works
+  without JS (server renders the daily verse).
+
 ## [1.5.1] — 2026-06-23
 
 ### Added

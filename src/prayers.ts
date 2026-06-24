@@ -18,6 +18,7 @@ export interface Prayer {
   prayedCount: number;
   createdAt: number;
   answeredAt: number | null;
+  outcome: string | null; // the praise report recorded when answered
 }
 
 export interface PrayerStats {
@@ -46,6 +47,7 @@ export async function addPrayer(input: NewPrayer): Promise<Prayer> {
     prayedCount: 0,
     createdAt: Date.now(),
     answeredAt: null,
+    outcome: null,
   };
   await kv.set([PRAYERS, prayer.id], prayer);
   return prayer;
@@ -80,14 +82,18 @@ export async function prayFor(id: string): Promise<number | null> {
   return null; // gave up under contention
 }
 
-/** Move a request into the answered (testimony) list. */
-export async function markAnswered(id: string): Promise<boolean> {
+/**
+ * Move a request into the answered (testimony) list, optionally recording the
+ * praise report describing what God did.
+ */
+export async function markAnswered(id: string, outcome = ""): Promise<boolean> {
   const entry = await kv.get<Prayer>([PRAYERS, id]);
   if (!entry.value || entry.value.status === "answered") return false;
   const updated: Prayer = {
     ...entry.value,
     status: "answered",
     answeredAt: Date.now(),
+    outcome: outcome.trim().slice(0, 600) || null,
   };
   const res = await kv.atomic().check(entry).set([PRAYERS, id], updated).commit();
   return res.ok;
@@ -125,6 +131,7 @@ export async function seedIfEmpty(): Promise<void> {
       prayedCount: 12,
       createdAt: now - 5 * hour,
       answeredAt: null,
+      outcome: null,
     },
     {
       id: crypto.randomUUID(),
@@ -136,6 +143,7 @@ export async function seedIfEmpty(): Promise<void> {
       prayedCount: 8,
       createdAt: now - 26 * hour,
       answeredAt: null,
+      outcome: null,
     },
     {
       id: crypto.randomUUID(),
@@ -147,17 +155,18 @@ export async function seedIfEmpty(): Promise<void> {
       prayedCount: 21,
       createdAt: now - 50 * hour,
       answeredAt: null,
+      outcome: null,
     },
     {
       id: crypto.randomUUID(),
       name: "Ruth M.",
-      body:
-        "Thank you, church, for praying with me — the biopsy came back completely clear. God is so faithful!",
-      category: "Thanksgiving",
+      body: "Praying for peace and steady faith as I wait on biopsy results this week.",
+      category: "Healing",
       status: "answered",
       prayedCount: 34,
       createdAt: now - 9 * 24 * hour,
       answeredAt: now - 2 * 24 * hour,
+      outcome: "The biopsy came back completely clear — thank you, church. God is so faithful!",
     },
   ];
 

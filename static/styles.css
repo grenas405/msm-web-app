@@ -1438,9 +1438,8 @@ img, svg, iframe {
 }
 .admin-row {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 1.5rem;
+  flex-direction: column;
+  gap: 1rem;
   background: var(--paper);
   border: 1px solid var(--line);
   border-radius: var(--radius);
@@ -1453,9 +1452,115 @@ img, svg, iframe {
 .admin-row-main .prayer-body {
   margin: 0.5rem 0;
 }
-.admin-row-action {
+
+/* Disclosure to mark a request answered with a praise report. */
+.answer-details {
+  border-top: 1px dashed var(--line);
+  padding-top: 0.9rem;
+}
+.answer-summary {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  width: fit-content;
+  font-family: var(--sans);
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: var(--navy-800);
+  background: var(--paper);
+  border: 1.5px solid var(--gold-500);
+  border-radius: 999px;
+  padding: 0.45rem 1rem;
+  cursor: pointer;
+  list-style: none;
+  transition: background 0.2s, color 0.2s;
+}
+.answer-summary::-webkit-details-marker {
+  display: none;
+}
+.answer-summary:hover {
+  background: var(--gold-500);
+  color: var(--navy-900);
+}
+.answer-summary .icon {
+  width: 1.05em;
+  height: 1.05em;
+}
+.answer-details[open] .answer-summary {
+  background: var(--navy-800);
+  color: #fff;
+  border-color: var(--navy-800);
+  margin-bottom: 1rem;
+}
+.answer-form-full {
+  display: grid;
+  gap: 0.85rem;
   margin: 0;
+  animation: answerReveal 0.25s ease;
+}
+@keyframes answerReveal {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+}
+.answer-field {
+  display: grid;
+  gap: 0.4rem;
+}
+.answer-field span {
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--navy-800);
+}
+.answer-field em {
+  font-style: normal;
+  font-weight: 400;
+  color: var(--ink-soft);
+}
+.answer-form-full textarea {
+  font-family: var(--sans);
+  font-size: 0.97rem;
+  color: var(--ink);
+  background: var(--ivory);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 0.7rem 0.85rem;
+  width: 100%;
+  resize: vertical;
+}
+.answer-form-full textarea:focus {
+  outline: none;
+  border-color: var(--gold-500);
+  box-shadow: 0 0 0 3px rgba(201, 161, 74, 0.18);
+}
+.answer-form-full .btn {
+  width: fit-content;
+}
+
+/* Answered praise report (testimony) display. */
+.testimony-outcome {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 1.18rem;
+  line-height: 1.4;
+  color: var(--navy-800);
+  margin: 0 0 0.6rem;
+}
+.testimony-origin {
+  display: flex;
+  align-items: baseline;
+  gap: 0.4rem;
+  font-size: 0.86rem;
+  color: var(--ink-soft);
+  margin: 0 0 1rem;
+}
+.testimony-origin .icon {
+  width: 1em;
+  height: 1em;
+  color: var(--gold-600);
   flex: none;
+  transform: translateY(0.15em);
 }
 .admin-row-meta {
   display: flex;
@@ -1533,6 +1638,24 @@ img, svg, iframe {
   line-height: 1.4;
   margin: 0 0 0.35rem;
   color: #fff;
+  /* Reserve room so typing/erasing doesn't jump the layout. */
+  min-height: 4.2em;
+}
+/* Blinking caret shown only while text is being typed or erased. */
+.admin-verse.is-typing .admin-verse-typed::after {
+  content: "";
+  display: inline-block;
+  width: 2px;
+  height: 1.05em;
+  margin-left: 2px;
+  vertical-align: -0.15em;
+  background: var(--gold-400);
+  animation: caret 0.8s step-end infinite;
+}
+@keyframes caret {
+  50% {
+    opacity: 0;
+  }
 }
 .admin-verse-ref {
   margin: 0;
@@ -1541,6 +1664,7 @@ img, svg, iframe {
   letter-spacing: 0.14em;
   text-transform: uppercase;
   color: var(--gold-400);
+  min-height: 1.2em;
 }
 
 .stat-tile-gold {
@@ -1619,11 +1743,7 @@ img, svg, iframe {
   .prayer-form-card {
     position: static;
   }
-  .admin-row {
-    flex-direction: column;
-    align-items: stretch;
-  }
-  .admin-row-action .btn {
+  .answer-summary {
     width: 100%;
     justify-content: center;
   }

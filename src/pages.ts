@@ -547,13 +547,21 @@ function prayerCard(p: Prayer): string {
   `;
 }
 
-/** Render one answered testimony card. */
+/** Render one answered testimony card for the public wall. */
 function testimonyCard(p: Prayer): string {
   const who = p.name ? p.name : "Anonymous";
+  const detail = p.outcome
+    ? html`
+      <p class="testimony-outcome">&ldquo;${p.outcome}&rdquo;</p>
+      <p class="testimony-origin">${raw(icon("hands").value)} Prayed: ${p.body}</p>
+    `
+    : html`
+      <p class="prayer-body">${p.body}</p>
+    `;
   return html`
     <article class="testimony-card">
       <span class="answered-badge">${raw(icon("check").value)} Answered</span>
-      <p class="prayer-body">${p.body}</p>
+      ${raw(detail)}
       <div class="prayer-foot">
         <span class="prayer-who">${raw(icon("spark").value)} ${who}</span>
         <span class="prayer-time">
@@ -796,10 +804,25 @@ function adminRow(p: Prayer, topId: string | null): string {
           )} prayed</span>
         </div>
       </div>
-      <form method="post" action="/admin/answer" class="admin-row-action">
-        <input type="hidden" name="id" value="${p.id}">
-        <button class="btn btn-sm" type="submit">${raw(icon("check").value)} Mark answered</button>
-      </form>
+      <details class="answer-details">
+        <summary class="answer-summary">${raw(icon("check").value)} Mark answered</summary>
+        <form method="post" action="/admin/answer" class="answer-form-full">
+          <input type="hidden" name="id" value="${p.id}">
+          <label class="answer-field">
+            <span>Share the praise report — what did God do?
+              <em>(optional · becomes a public testimony)</em></span>
+            <textarea
+              name="outcome"
+              rows="3"
+              maxlength="600"
+              placeholder="e.g. The surgery went perfectly and recovery is ahead of schedule — praise God!"
+            ></textarea>
+          </label>
+          <button class="btn btn-sm" type="submit">
+            ${raw(icon("spark").value)} Record &amp; give thanks
+          </button>
+        </form>
+      </details>
     </article>
   `;
 }
@@ -808,10 +831,18 @@ function adminRow(p: Prayer, topId: string | null): string {
 function adminAnsweredCard(p: Prayer): string {
   const who = p.name ? p.name : "Anonymous";
   const when = p.answeredAt ? timeAgo(p.answeredAt) : "";
+  const detail = p.outcome
+    ? html`
+      <p class="testimony-outcome">&ldquo;${p.outcome}&rdquo;</p>
+      <p class="testimony-origin">${raw(icon("hands").value)} Prayed: ${p.body}</p>
+    `
+    : html`
+      <p class="prayer-body">${p.body}</p>
+    `;
   return html`
     <article class="admin-answered">
       <span class="answered-badge">${raw(icon("check").value)} Answered ${raw(when)}</span>
-      <p class="prayer-body">${p.body}</p>
+      ${raw(detail)}
       <span class="prayer-who">${raw(icon("spark").value)} ${who}</span>
     </article>
   `;
@@ -888,11 +919,15 @@ export function adminDashboard(view: AdminDashboardView): string {
           </div>
         </header>
 
-        <div class="admin-verse">
+        <div class="admin-verse" data-verses="${JSON.stringify(SHEPHERD_VERSES)}">
           <span class="admin-verse-icon">${raw(icon("book").value)}</span>
           <div>
-            <p class="admin-verse-text">&ldquo;${verse.text}&rdquo;</p>
-            <p class="admin-verse-ref">— ${verse.reference}</p>
+            <p class="admin-verse-text">
+              &ldquo;<span class="admin-verse-typed">${verse
+                .text}</span>&rdquo;
+            </p>
+            <p class="admin-verse-ref">— <span class="admin-verse-refname">${verse
+              .reference}</span></p>
           </div>
         </div>
 

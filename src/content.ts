@@ -171,7 +171,7 @@ export const PRAYER_CATEGORIES = [
   "Other",
 ] as const;
 
-// Encouragements shown to the pastor on the admin dashboard, rotating by day.
+// Encouragements for the pastor, cycled with a typing animation on the dashboard.
 export const SHEPHERD_VERSES: Verse[] = [
   {
     text:
@@ -195,7 +195,36 @@ export const SHEPHERD_VERSES: Verse[] = [
   },
   {
     text:
-      "His master replied, 'Well done, good and faithful servant! Come and share your master's happiness!'",
-    reference: "Matthew 25:23",
+      "Well done, good and faithful servant! You have been faithful with a few things; I will put you in charge of many things.",
+    reference: "Matthew 25:21",
+  },
+  {
+    text:
+      "When Jesus saw the crowds, he had compassion on them, because they were like sheep without a shepherd.",
+    reference: "Matthew 9:36",
+  },
+  {
+    text:
+      "Therefore, my dear brothers and sisters, stand firm. Let nothing move you. Always give yourselves fully to the work of the Lord, because you know that your labor in the Lord is not in vain.",
+    reference: "1 Corinthians 15:58",
+  },
+  {
+    text:
+      "Be strong and courageous. Do not be afraid; for the Lord your God will be with you wherever you go.",
+    reference: "Joshua 1:9",
+  },
+  {
+    text: "And let us consider how we may spur one another on toward love and good deeds.",
+    reference: "Hebrews 10:24",
+  },
+  {
+    text:
+      "I thank my God every time I remember you. In all my prayers for all of you, I always pray with joy.",
+    reference: "Philippians 1:3–4",
+  },
+  {
+    text:
+      "He tends his flock like a shepherd: He gathers the lambs in his arms and carries them close to his heart.",
+    reference: "Isaiah 40:11",
   },
 ];
