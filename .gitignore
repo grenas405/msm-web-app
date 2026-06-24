@@ -1,0 +1,5 @@
+# Runtime data — uploaded lesson PDFs and any local Deno KV database files.
+/data/
+*.db
+*.db-shm
+*.db-wal

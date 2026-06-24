@@ -7,6 +7,8 @@ import { icon } from "./icons.ts";
 import {
   BENEDICTION,
   CONTACT,
+  FELLOWSHIP_VERSE,
+  GIVING,
   PILLARS,
   PRAYER_CATEGORIES,
   PRAYER_VERSE,
@@ -17,6 +19,7 @@ import {
   type Verse,
   VERSES,
 } from "./content.ts";
+import type { Lesson } from "./lessons.ts";
 import type { Prayer, PrayerStats } from "./prayers.ts";
 
 // ── Shared section builders ───────────────────────────────────────────────
@@ -213,7 +216,7 @@ export function about(): string {
       <div class="container">
         <div class="section-head">
           <p class="eyebrow">What We're Built On</p>
-          <h2>Six pillars of our common life.</h2>
+          <h2>The pillars of our common life.</h2>
         </div>
         <div class="pillar-grid">
           ${raw(
@@ -362,7 +365,7 @@ export function ministries(): string {
       </div>
     </section>
 
-    ${raw(ctaBand())}
+    ${raw(scriptureBanner(FELLOWSHIP_VERSE))} ${raw(ctaBand())}
   `;
 
   return page({
@@ -393,6 +396,28 @@ export function contact(): string {
     </section>
 
     <section class="section">
+      <div class="container pastor-card">
+        <img
+          class="pastor-photo"
+          src="/static/pastor-family.png"
+          width="715"
+          height="511"
+          alt="Pastor James and Folake Olufowote"
+          loading="lazy"
+        >
+        <div class="pastor-words">
+          <p class="eyebrow">Your Pastor &amp; First Lady</p>
+          <h2>${CONTACT.pastor} &amp; Folake</h2>
+          <p>
+            It would be our joy to welcome you to Mercy Seat Ministries. Whether you have a question, a
+            prayer need, or simply want to visit, please don't hesitate to reach out — our door and
+            our hearts are open to you.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section section-tint">
       <div class="container contact-grid">
         <div class="contact-details">
           <div class="contact-row">
@@ -408,8 +433,14 @@ export function contact(): string {
           <div class="contact-row">
             <span class="contact-icon">${raw(icon("phone").value)}</span>
             <div>
-              <h3>Call Us</h3>
-              <p><a href="${CONTACT.phoneHref}">${CONTACT.phone}</a></p>
+              <h3>Call or Text Us</h3>
+              ${raw(
+                CONTACT.phones.map((ph) =>
+                  html`
+                    <p><a href="${ph.href}">${ph.display}</a></p>
+                  `
+                ).join(""),
+              )}
               <p class="muted">${CONTACT.pastor}</p>
             </div>
           </div>
@@ -426,7 +457,6 @@ export function contact(): string {
               <h3>Join Online</h3>
               <p><a href="${CONTACT
                 .zoom}" target="_blank" rel="noopener">Worship with us on Zoom</a></p>
-              <p class="muted">Skype: ${CONTACT.skype}</p>
             </div>
           </div>
         </div>
@@ -449,6 +479,149 @@ export function contact(): string {
     description:
       "Contact Mercy Seat Ministries OKC. Visit us at 705 NW 10th Street, Newcastle, OK, call (405) 402-7274, or join us online via Zoom.",
     path: "/contact",
+    body,
+  });
+}
+
+// ── Giving ────────────────────────────────────────────────────────────────
+
+export function giving(): string {
+  const body = html`
+    <section class="page-hero">
+      <div class="container">
+        <p class="eyebrow">Give</p>
+        <h1>Give cheerfully, give faithfully.</h1>
+        <p class="page-hero-lead">
+          Your tithes, offerings, and donations help us share the love of Christ across Oklahoma City
+          and beyond. Thank you for your generosity.
+        </p>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container give-grid">
+        <article class="give-card give-card-feature">
+          <span class="give-badge">Zelle</span>
+          <h2>Give with Zelle</h2>
+          <p>
+            Send your tithe or offering directly from your bank's app — no fees, no account needed
+            beyond your own bank.
+          </p>
+          <ol class="give-steps">
+            <li>Open your bank's app and choose <strong>Zelle</strong>.</li>
+            <li>Add Mercy Seat Ministries using the email below.</li>
+            <li>Enter your amount and send. That's it!</li>
+          </ol>
+          <a class="give-zelle" href="mailto:${GIVING.zelleEmail}">
+            ${raw(icon("mail").value)} ${GIVING.zelleEmail}
+          </a>
+          <p class="muted">Our Zelle account is registered to this email.</p>
+        </article>
+
+        <article class="give-card">
+          <span class="pillar-icon">${raw(icon("heart").value)}</span>
+          <h2>More ways to give</h2>
+          <p>
+            You're always welcome to give in person during any of our weekly services, or by mailing a
+            check to the church.
+          </p>
+          <p>
+            Card and debit giving is coming soon. In the meantime, if you'd like help giving, please <a
+              href="/contact"
+            >reach out to us</a> — we're glad to assist.
+          </p>
+        </article>
+      </div>
+    </section>
+
+    <section class="scripture">
+      <div class="container">
+        <p class="scripture-text">
+          &ldquo;Each of you should give what you have decided in your heart to give, not reluctantly or
+          under compulsion, for God loves a cheerful giver.&rdquo;
+        </p>
+        <p class="scripture-ref">— 2 Corinthians 9:7</p>
+      </div>
+    </section>
+  `;
+
+  return page({
+    title: "Giving",
+    description:
+      "Give your tithes and offerings to Mercy Seat Ministries OKC online via Zelle, in person, or by mail.",
+    path: "/giving",
+    body,
+  });
+}
+
+// ── Sunday School ─────────────────────────────────────────────────────────
+
+/** Format an ISO date (YYYY-MM-DD) as e.g. "August 4, 2024". */
+function formatLessonDate(iso: string): string {
+  const [y, m, d] = iso.split("-").map(Number);
+  if (!y || !m || !d) return iso;
+  return new Date(y, m - 1, d).toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
+}
+
+/** A single lesson row with a download link. */
+function lessonRow(l: Lesson): string {
+  return html`
+    <a class="lesson-row" href="/lessons/${l.id}.pdf" target="_blank" rel="noopener">
+      <span class="lesson-icon">${raw(icon("book").value)}</span>
+      <span class="lesson-info">
+        <span class="lesson-title">${l.title}</span>
+        <span class="lesson-date">${formatLessonDate(l.date)}</span>
+      </span>
+      <span class="lesson-cta">View PDF ${raw(icon("arrow").value)}</span>
+    </a>
+  `;
+}
+
+export function sundaySchool(lessons: Lesson[]): string {
+  const list = lessons.length > 0
+    ? html`
+      <div class="lesson-list">${raw(lessons.map(lessonRow).join(""))}</div>
+    `
+    : html`
+      <p class="empty-note">
+        Lessons will be posted here soon. Join us Sundays at 9:30 AM for Sunday School!
+      </p>
+    `;
+
+  const body = html`
+    <section class="page-hero">
+      <div class="container">
+        <p class="eyebrow">Sunday School</p>
+        <h1>Grow deeper in the Word.</h1>
+        <p class="page-hero-lead">
+          Download this week's lesson or revisit any from our archive. Sunday School meets every Sunday
+          at 9:30 AM, in person and online.
+        </p>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container">
+        ${raw(list)}
+      </div>
+    </section>
+
+    ${raw(scriptureBanner({
+      text:
+        "All Scripture is God-breathed and is useful for teaching, rebuking, correcting and training in righteousness.",
+      reference: "2 Timothy 3:16",
+    }))}
+  `;
+
+  return page({
+    title: "Sunday School",
+    description:
+      "Download Sunday School lessons from Mercy Seat Ministries OKC and browse the archive of past lessons.",
+    path: "/sunday-school",
     body,
   });
 }
@@ -921,6 +1094,8 @@ export function adminDashboard(view: AdminDashboardView): string {
           </div>
         </header>
 
+        ${raw(adminTabs("prayer"))}
+
         <div class="admin-verse" data-verses="${JSON.stringify(SHEPHERD_VERSES)}">
           <span class="admin-verse-icon">${raw(icon("book").value)}</span>
           <div>
@@ -957,6 +1132,146 @@ export function adminDashboard(view: AdminDashboardView): string {
     title: "Admin",
     description: "Prayer Wall administration.",
     path: "/admin",
+    body,
+    bare: true,
+  });
+}
+
+/** Tab navigation shared by the admin screens. */
+function adminTabs(active: "prayer" | "lessons"): string {
+  const tab = (id: string, href: string, label: string) =>
+    html`
+      <a class="admin-tab${active === id ? " active" : ""}" href="${href}">${label}</a>
+    `;
+  return html`
+    <nav class="admin-tabs" aria-label="Admin sections">
+      ${raw(tab("prayer", "/admin", "Prayer Wall"))} ${raw(
+        tab("lessons", "/admin/lessons", "Sunday School"),
+      )}
+    </nav>
+  `;
+}
+
+export interface AdminLessonsView {
+  lessons: Lesson[];
+  error: string | null;
+}
+
+/** Format a byte count like "1.4 MB". */
+function formatBytes(bytes: number): string {
+  if (bytes < 1024) return `${bytes} B`;
+  if (bytes < 1024 * 1024) return `${Math.round(bytes / 1024)} KB`;
+  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+}
+
+/** A managed lesson row in the admin list, with a delete control. */
+function adminLessonRow(l: Lesson): string {
+  return html`
+    <article class="admin-lesson">
+      <span class="lesson-icon">${raw(icon("book").value)}</span>
+      <div class="admin-lesson-info">
+        <a class="lesson-title" href="/lessons/${l.id}.pdf" target="_blank" rel="noopener">
+          ${l.title}
+        </a>
+        <span class="lesson-date">${formatLessonDate(l.date)} · ${formatBytes(l.size)}</span>
+      </div>
+      <form
+        method="post"
+        action="/admin/lessons/delete"
+        class="admin-lesson-delete"
+        onsubmit="return confirm('Delete this lesson? This cannot be undone.')"
+      >
+        <input type="hidden" name="id" value="${l.id}">
+        <button class="admin-delete-btn" type="submit" aria-label="Delete lesson">Delete</button>
+      </form>
+    </article>
+  `;
+}
+
+/** Protected admin page to upload and manage Sunday School lessons. */
+export function adminLessons(view: AdminLessonsView): string {
+  const alert = view.error
+    ? html`
+      <p class="admin-alert" role="alert">${view.error}</p>
+    `
+    : "";
+
+  const list = view.lessons.length > 0
+    ? html`
+      <div class="admin-lesson-list">${raw(view.lessons.map(adminLessonRow).join(""))}</div>
+    `
+    : html`
+      <p class="empty-note">No lessons posted yet. Upload your first one above.</p>
+    `;
+
+  const body = html`
+    <section class="admin-shell">
+      <div class="container">
+        <header class="admin-bar">
+          <div class="admin-brand">
+            <span class="admin-mark">${raw(icon("book").value)}</span>
+            <div>
+              <p class="eyebrow">${SITE.name} · Sunday School</p>
+              <h1>Lesson Library</h1>
+              <p class="admin-date">Post a PDF lesson and manage the archive</p>
+            </div>
+          </div>
+          <div class="admin-bar-actions">
+            <a class="btn btn-sm btn-outline" href="/sunday-school" target="_blank" rel="noopener">
+              View page ${raw(icon("arrow").value)}
+            </a>
+            <form method="post" action="/admin/logout">
+              <button class="btn btn-sm" type="submit">Sign out</button>
+            </form>
+          </div>
+        </header>
+
+        ${raw(adminTabs("lessons"))}
+
+        <div class="upload-card">
+          <h2>Post a new lesson</h2>
+          <p class="muted">Upload a PDF, give it a title and the date it was taught.</p>
+          ${raw(alert)}
+          <form method="post" action="/admin/lessons" enctype="multipart/form-data" class="upload-form">
+            <label>
+              <span>Lesson title</span>
+              <input
+                type="text"
+                name="title"
+                maxlength="160"
+                required
+                placeholder="e.g. The Parable of the Sower"
+              >
+            </label>
+            <label>
+              <span>Date taught</span>
+              <input type="date" name="date" required>
+            </label>
+            <label class="upload-file">
+              <span>Lesson PDF</span>
+              <input type="file" name="file" accept="application/pdf, .pdf" required>
+            </label>
+            <button class="btn btn-lg" type="submit">
+              ${raw(icon("book").value)} Post lesson
+            </button>
+          </form>
+        </div>
+
+        <div class="section-head feed-head admin-section-head">
+          <h2>Posted lessons ${view.lessons.length > 0
+            ? raw(`<span class="count-badge">${view.lessons.length}</span>`)
+            : ""}</h2>
+          <p class="section-lead">Newest first. Deleting removes the PDF permanently.</p>
+        </div>
+        ${raw(list)}
+      </div>
+    </section>
+  `;
+
+  return page({
+    title: "Sunday School Admin",
+    description: "Manage Sunday School lessons.",
+    path: "/admin/lessons",
     body,
     bare: true,
   });

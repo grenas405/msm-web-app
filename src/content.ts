@@ -13,10 +13,16 @@ export const SITE = {
 
 export const CONTACT = {
   pastor: "Pastor James Olufowote",
+  // The primary number, used in the footer and the Services page.
   phone: "(405) 402-7274",
   phoneHref: "tel:+14054027274",
-  email: "msmokc@gmail.com",
-  skype: "live:msmokc_1",
+  // All numbers, shown on the Contact page.
+  phones: [
+    { display: "(405) 402-7274", href: "tel:+14054027274" },
+    { display: "(765) 409-2623", href: "tel:+17654092623" },
+    { display: "(405) 639-1693", href: "tel:+14056391693" },
+  ],
+  email: "msmokc@outlook.com",
   address: {
     line1: "705 NW 10th Street",
     detail: "Conference Room",
@@ -25,6 +31,11 @@ export const CONTACT = {
     zip: "73065",
   },
   zoom: "https://zoom.us/j/92145127989?pwd=ZVYxYlFKRjZpWFRqa1ZhQ24vTUJHQT09",
+} as const;
+
+// Online giving. Card/debit giving can be added later via a hosted link.
+export const GIVING = {
+  zelleEmail: "msmokc@outlook.com",
 } as const;
 
 export interface ServiceTime {
@@ -102,6 +113,12 @@ export const PILLARS: Pillar[] = [
     body: "Investing in children and young adults as they grow in faith, character, and calling.",
     icon: "sprout",
   },
+  {
+    title: "Fellowship",
+    body:
+      "Sharing life together — breaking bread from house to house with glad and sincere hearts, as the early church did.",
+    icon: "users",
+  },
 ];
 
 export interface NavItem {
@@ -114,7 +131,9 @@ export const NAV: NavItem[] = [
   { label: "About", href: "/about" },
   { label: "Services", href: "/services" },
   { label: "Ministries", href: "/ministries" },
+  { label: "Sunday School", href: "/sunday-school" },
   { label: "Prayer Wall", href: "/prayer-wall" },
+  { label: "Giving", href: "/giving" },
   { label: "Contact", href: "/contact" },
 ];
 
@@ -158,6 +177,13 @@ export const BENEDICTION: Verse = {
 export const PRAYER_VERSE: Verse = {
   text: "Carry each other's burdens, and in this way you will fulfill the law of Christ.",
   reference: "Galatians 6:2",
+};
+
+// The verse that anchors the Fellowship ministry.
+export const FELLOWSHIP_VERSE: Verse = {
+  text:
+    "So continuing daily with one accord in the temple, and breaking bread from house to house, they ate their food with gladness and simplicity of heart.",
+  reference: "Acts 2:46",
 };
 
 // The fixed set of categories offered on the Prayer Wall request form.

@@ -9,8 +9,10 @@
 // with JavaScript disabled. The pray endpoint also answers JSON when asked.
 
 import { STATUS_CODE } from "@std/http/status";
+import { serveFile } from "@std/http/file-server";
 import * as pages from "./pages.ts";
 import { addPrayer, getStats, listPrayers, markAnswered, prayFor } from "./prayers.ts";
+import { addLesson, deleteLesson, getLesson, lessonPath, listLessons } from "./lessons.ts";
 import {
   clearCookie,
   createSession,
@@ -22,6 +24,9 @@ import {
   verifyPassword,
 } from "./auth.ts";
 
+/** Largest PDF we accept for a Sunday School lesson. */
+const MAX_LESSON_BYTES = 25 * 1024 * 1024;
+
 /** A page builder produces a complete HTML document. */
 type PageBuilder = () => string;
 
@@ -31,6 +36,7 @@ const ROUTES: Record<string, PageBuilder> = {
   "/about": pages.about,
   "/services": pages.services,
   "/ministries": pages.ministries,
+  "/giving": pages.giving,
   "/contact": pages.contact,
 };
 
@@ -49,6 +55,12 @@ export async function route(request: Request, url: URL): Promise<Response> {
   if (path === "/prayer-wall") {
     return await renderPrayerWall();
   }
+  if (path === "/sunday-school") {
+    return htmlResponse(pages.sundaySchool(await listLessons()));
+  }
+  if (path.startsWith("/lessons/") && path.endsWith(".pdf")) {
+    return await serveLesson(request, path);
+  }
   if (path === "/admin/login") {
     // Already signed in? Skip straight to the dashboard.
     if (await isAuthed(request)) return redirect("/admin");
@@ -58,12 +70,24 @@ export async function route(request: Request, url: URL): Promise<Response> {
     if (!(await isAuthed(request))) return redirect("/admin/login");
     return await renderAdmin();
   }
+  if (path === "/admin/lessons") {
+    if (!(await isAuthed(request))) return redirect("/admin/login");
+    return htmlResponse(pages.adminLessons({ lessons: await listLessons(), error: null }));
+  }
 
   const builder = ROUTES[path];
   if (builder) {
     return htmlResponse(builder());
   }
   return htmlResponse(pages.notFound(), STATUS_CODE.NotFound);
+}
+
+/** GET /lessons/:id.pdf — stream a lesson PDF from disk if it exists. */
+async function serveLesson(request: Request, path: string): Promise<Response> {
+  const id = path.slice("/lessons/".length, -".pdf".length);
+  const lesson = await getLesson(id);
+  if (!lesson) return htmlResponse(pages.notFound(), STATUS_CODE.NotFound);
+  return await serveFile(request, lessonPath(id));
 }
 
 /** GET /prayer-wall — gather data from KV and render the public wall. */
@@ -142,7 +166,44 @@ async function handlePost(request: Request, url: URL, path: string): Promise<Res
     return redirect("/admin");
   }
 
+  if (path === "/admin/lessons") {
+    if (!(await isAuthed(request))) return redirect("/admin/login");
+    return await uploadLesson(form);
+  }
+
+  if (path === "/admin/lessons/delete") {
+    if (!(await isAuthed(request))) return redirect("/admin/login");
+    await deleteLesson(String(form.get("id") ?? ""));
+    return redirect("/admin/lessons");
+  }
+
   return htmlResponse(pages.notFound(), STATUS_CODE.NotFound);
+}
+
+/** Validate and store an uploaded Sunday School PDF. */
+async function uploadLesson(form: FormData): Promise<Response> {
+  const fail = async (message: string) =>
+    htmlResponse(
+      pages.adminLessons({ lessons: await listLessons(), error: message }),
+      STATUS_CODE.BadRequest,
+    );
+
+  const file = form.get("file");
+  if (!(file instanceof File) || file.size === 0) {
+    return await fail("Please choose a PDF file to upload.");
+  }
+  const isPdf = file.type === "application/pdf" || file.name.toLowerCase().endsWith(".pdf");
+  if (!isPdf) return await fail("That file isn't a PDF. Please upload a PDF lesson.");
+  if (file.size > MAX_LESSON_BYTES) {
+    return await fail("That PDF is larger than 25 MB. Please upload a smaller file.");
+  }
+
+  const bytes = new Uint8Array(await file.arrayBuffer());
+  await addLesson(
+    { title: String(form.get("title") ?? ""), date: String(form.get("date") ?? "") },
+    bytes,
+  );
+  return redirect("/admin/lessons");
 }
 
 /** True when the request carries a valid admin session cookie. */

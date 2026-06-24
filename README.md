@@ -71,14 +71,16 @@ static/
 
 ## Pages
 
-| Path           | Purpose                                                  |
-| -------------- | -------------------------------------------------------- |
-| `/`            | Home — hero, welcome, weekly services, call to act       |
-| `/about`       | Story, the six pillars, leadership                       |
-| `/services`    | Service times + ways to attend (in person/Zoom/phone)    |
-| `/ministries`  | The ministries of the church                             |
-| `/prayer-wall` | Interactive prayer requests, "I prayed" counts, answered |
-| `/contact`     | Address, phone, email, Zoom, and an embedded map         |
+| Path             | Purpose                                                    |
+| ---------------- | ---------------------------------------------------------- |
+| `/`              | Home — hero, welcome, weekly services, call to act         |
+| `/about`         | Story, the pillars, leadership                             |
+| `/services`      | Service times + ways to attend (in person/Zoom/phone)      |
+| `/ministries`    | The ministries of the church (incl. Fellowship, Acts 2:46) |
+| `/sunday-school` | Download this week's lesson + browse the PDF archive       |
+| `/prayer-wall`   | Interactive prayer requests, "I prayed" counts, answered   |
+| `/giving`        | Online giving via Zelle (card giving can be added later)   |
+| `/contact`       | Pastors' photo, phones, email, Zoom, and an embedded map   |
 
 ## Prayer Wall
 
@@ -109,6 +111,13 @@ deno task set-password "a-strong-passphrase"
 mark requests as answered. When marking one answered, the pastor can record a **praise report**
 ("what did God do?") — it becomes the headline of the public testimony. The dashboard also greets
 the pastor by name and cycles encouraging scriptures with a typing animation.
+
+The admin area has two tabs:
+
+- **Prayer Wall** (`/admin`) — manage requests and answered testimonies.
+- **Sunday School** (`/admin/lessons`) — upload a lesson PDF with a title and date, and delete old
+  ones. PDFs are stored on disk under `MSM_DATA_DIR` (default `./data`); metadata lives in KV.
+  Uploads are validated as PDFs and capped at 25 MB. The public archive is at `/sunday-school`.
 
 How it works:
 
@@ -180,13 +189,10 @@ sudo journalctl -u msm-web-app -f
 
 ## Content & data
 
-All editable text lives in `src/content.ts` — service times, contact details, the mission statement,
-and the navigation. Update that one file to change the site's content.
-
-> **Note:** Contact details (address, phone, pastor, Zoom link) were sourced from the ministry's
-> current Weebly site (`msmokc.weebly.com`). The public email was not fully visible during sourcing
-> and is set to a best-effort value in `src/content.ts` — **verify `CONTACT.email` before going
-> live.**
+All editable text lives in `src/content.ts` — service times, contact details (email, the list of
+phone numbers, pastor), the mission statement, ministries, and the navigation. Update that one file
+to change the site's content. Sunday School lessons and answered-prayer testimonies are managed from
+the [Admin](#admin) area instead of code.
 
 ## Permissions
 
@@ -194,6 +200,6 @@ The app requests the minimum Deno permissions:
 
 - `--allow-net` — to serve HTTP
 - `--allow-read` — to read static assets and the Deno KV store
-- `--allow-write` — to persist Prayer Wall requests, the admin password, and sessions
-- `--allow-env` — to read `HOST`, `PORT`, and `MSM_KV_PATH`
-- `--unstable-kv` — enables Deno KV (Prayer Wall + admin auth)
+- `--allow-write` — to persist KV data and uploaded lesson PDFs (`MSM_DATA_DIR`)
+- `--allow-env` — to read `HOST`, `PORT`, `MSM_KV_PATH`, and `MSM_DATA_DIR`
+- `--unstable-kv` — enables Deno KV (Prayer Wall + admin auth + lessons)

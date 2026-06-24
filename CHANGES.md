@@ -2,6 +2,36 @@
 
 All notable changes to the Mercy Seat Ministries web app are documented here.
 
+## [1.7.0] — 2026-06-24
+
+Changes requested by the pastor.
+
+### Added
+
+- **Sunday School page** (`/sunday-school`) — download the latest lesson and browse the archive,
+  newest first. Lessons are managed from a new **admin upload page** (`/admin/lessons`): upload a
+  PDF with a title and date, or delete old ones. PDFs are stored on disk under `MSM_DATA_DIR`
+  (default `./data`), validated as PDFs and capped at 25 MB; metadata lives in Deno KV. New
+  `src/lessons.ts` data layer.
+- **Giving page** (`/giving`) — online tithes/offerings via **Zelle** (to `msmokc@outlook.com`) with
+  step-by-step instructions. Card/debit giving can be added later via a hosted link.
+- **Fellowship** ministry on the Ministries page, anchored by **Acts 2:46**.
+- **Pastor & First Lady photo** (James & Folake) on the Contact page, pulled from the ministry's
+  previous site.
+- Admin tab navigation (Prayer Wall · Sunday School); a `.gitignore` for runtime data.
+
+### Changed
+
+- **Corrected email** to `msmokc@outlook.com`.
+- **Contact page now lists all three phone numbers** — (405) 402-7274, (765) 409-2623, and (405)
+  639-1693.
+- Slightly tighter top-nav spacing (two new links) and the mobile menu now engages a bit earlier so
+  the wider nav never overflows.
+
+### Removed
+
+- The **Skype** address from the Contact page (no longer used).
+
 ## [1.6.1] — 2026-06-23
 
 ### Changed
