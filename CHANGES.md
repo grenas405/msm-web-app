@@ -2,6 +2,15 @@
 
 All notable changes to the Mercy Seat Ministries web app are documented here.
 
+## [1.3.1] — 2026-06-23
+
+### Added
+
+- **Promotional Prayer Wall pill in the hero.** A glassy, gold-accented announcement button at the
+  top of the hero ("New · Introducing our Prayer Wall") linking to `/prayer-wall`, with a hover
+  nudge. Its descriptive tail collapses gracefully on small screens. Promotes the new feature
+  without crowding the two primary CTAs.
+
 ## [1.3.0] — 2026-06-23
 
 ### Added

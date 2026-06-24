@@ -97,6 +97,16 @@ export function home(): string {
     <section class="hero">
       <div class="hero-overlay"></div>
       <div class="container hero-content">
+        <a class="hero-promo" href="/prayer-wall">
+          <span class="hero-promo-tag">New</span>
+          <span class="hero-promo-label">
+            ${raw(icon("hands").value)} Introducing our Prayer Wall<span
+              class="hero-promo-more"
+            >
+              — share &amp; pray together</span>
+          </span>
+          <span class="hero-promo-arrow">${raw(icon("arrow").value)}</span>
+        </a>
         <p class="eyebrow eyebrow-rule">Welcome to ${SITE.name}</p>
         <h1 class="hero-title">Come and find<br><em>grace &amp; rest.</em></h1>
         <p class="hero-lead">

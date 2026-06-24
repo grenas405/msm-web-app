@@ -355,6 +355,71 @@ img, svg, iframe {
   padding-top: 2rem;
   padding-bottom: 2rem;
 }
+
+/* Promotional announcement pill at the top of the hero. */
+.hero-promo {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.7rem;
+  max-width: 100%;
+  margin-bottom: 1.75rem;
+  padding: 0.4rem 0.95rem 0.4rem 0.45rem;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(216, 189, 118, 0.45);
+  backdrop-filter: blur(8px);
+  box-shadow: 0 10px 34px -16px rgba(0, 0, 0, 0.55);
+  color: #fff;
+  font-weight: 500;
+  font-size: 0.95rem;
+  line-height: 1.2;
+  transition: background 0.25s, border-color 0.25s, transform 0.2s;
+}
+.hero-promo:hover {
+  background: rgba(255, 255, 255, 0.14);
+  border-color: var(--gold-400);
+  color: #fff;
+  transform: translateY(-1px);
+}
+.hero-promo-tag {
+  flex: none;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--navy-900);
+  background: linear-gradient(145deg, var(--gold-400), var(--gold-500));
+  padding: 0.28rem 0.65rem;
+  border-radius: 999px;
+}
+.hero-promo-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.hero-promo-label .icon {
+  flex: none;
+  width: 1.1em;
+  height: 1.1em;
+  color: var(--gold-400);
+}
+.hero-promo-arrow {
+  display: inline-flex;
+  flex: none;
+}
+.hero-promo-arrow .icon {
+  width: 1em;
+  height: 1em;
+  transition: transform 0.2s;
+}
+.hero-promo:hover .hero-promo-arrow .icon {
+  transform: translateX(4px);
+}
+
 .hero .eyebrow {
   color: var(--gold-400);
 }
@@ -1244,6 +1309,9 @@ img, svg, iframe {
   .hero-actions .btn, .cta-actions .btn {
     flex: 1;
     justify-content: center;
+  }
+  .hero-promo-more {
+    display: none;
   }
 }
 
