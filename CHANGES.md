@@ -2,6 +2,20 @@
 
 All notable changes to the Mercy Seat Ministries web app are documented here.
 
+## [1.6.1] — 2026-06-23
+
+### Changed
+
+- **Polished the admin dashboard styling** for a more professional, app-like feel and easier
+  navigation — scoped so the public site is untouched:
+  - A **sticky, frosted floating header** keeps the greeting and actions (View wall, Sign out) in
+    reach while scrolling.
+  - **Bigger, more confident typography** throughout — greeting, stat values, verse banner, section
+    headings, and request text.
+  - **Redesigned stat tiles** (icon + stacked value/label, hover lift) and **roomier,
+    hover-responsive request and testimony cards** with clearer section headers.
+  - Subtle layered background and a more premium verse banner.
+
 ## [1.6.0] — 2026-06-23
 
 ### Added

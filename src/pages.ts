@@ -516,8 +516,10 @@ function statTile(value: number, label: string, ic: string, highlight = false): 
   return html`
     <div class="stat-tile${highlight ? " stat-tile-gold" : ""}">
       <span class="stat-icon">${raw(icon(ic).value)}</span>
-      <span class="stat-value">${value.toLocaleString("en-US")}</span>
-      <span class="stat-label">${label}</span>
+      <span class="stat-text">
+        <span class="stat-value">${value.toLocaleString("en-US")}</span>
+        <span class="stat-label">${label}</span>
+      </span>
     </div>
   `;
 }
