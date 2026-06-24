@@ -48,3 +48,47 @@
     observer.observe(el);
   });
 })();
+
+(function prayerWall() {
+  const forms = document.querySelectorAll(".pray-form");
+  if (!forms.length) return;
+
+  // Remember which requests this browser already prayed for.
+  const KEY = "msm-prayed";
+  const prayed = new Set(JSON.parse(localStorage.getItem(KEY) || "[]"));
+  const remember = (id) => {
+    prayed.add(id);
+    localStorage.setItem(KEY, JSON.stringify([...prayed]));
+  };
+
+  forms.forEach((form) => {
+    const button = form.querySelector(".pray-btn");
+    const id = button?.dataset.id;
+    if (id && prayed.has(id)) button.classList.add("prayed");
+
+    form.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      if (!button || button.classList.contains("prayed")) return;
+      button.disabled = true;
+      try {
+        const res = await fetch(form.action, {
+          method: "POST",
+          headers: { "accept": "application/json" },
+          body: new FormData(form),
+        });
+        const data = await res.json();
+        if (data.ok) {
+          const count = form.querySelector(".pray-count");
+          if (count) count.textContent = String(data.count);
+          button.classList.add("prayed");
+          remember(id);
+        }
+      } catch {
+        form.submit(); // fall back to a full POST + redirect
+        return;
+      } finally {
+        button.disabled = false;
+      }
+    });
+  });
+})();

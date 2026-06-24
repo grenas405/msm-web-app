@@ -35,10 +35,11 @@ src/
   icons.ts         Inline SVG icon set; icon(name) -> trusted SVG
   layout.ts        The page shell: <head>, header/nav, footer  (page())
   pages.ts         One explicit function per page (home, about, services, …)
-  router.ts        A tiny route table: pathname -> Response
+  prayers.ts       Prayer Wall data layer — persists requests in Deno KV
+  router.ts        Dispatcher: GET pages + Prayer Wall GET/POST endpoints
 static/
   styles.css       The full design system (navy + gold on ivory)
-  app.js           Progressive enhancement only (nav, sticky header, reveals)
+  app.js           Progressive enhancement (nav, sticky header, reveals, pray button)
   favicon.svg      Site icon
 ```
 
@@ -60,13 +61,31 @@ static/
 
 ## Pages
 
-| Path          | Purpose                                               |
-| ------------- | ----------------------------------------------------- |
-| `/`           | Home — hero, welcome, weekly services, call to act    |
-| `/about`      | Story, the six pillars, leadership                    |
-| `/services`   | Service times + ways to attend (in person/Zoom/phone) |
-| `/ministries` | The ministries of the church                          |
-| `/contact`    | Address, phone, email, Zoom, and an embedded map      |
+| Path           | Purpose                                                  |
+| -------------- | -------------------------------------------------------- |
+| `/`            | Home — hero, welcome, weekly services, call to act       |
+| `/about`       | Story, the six pillars, leadership                       |
+| `/services`    | Service times + ways to attend (in person/Zoom/phone)    |
+| `/ministries`  | The ministries of the church                             |
+| `/prayer-wall` | Interactive prayer requests, "I prayed" counts, answered |
+| `/contact`     | Address, phone, email, Zoom, and an embedded map         |
+
+## Prayer Wall
+
+An interactive feature where the congregation shares prayer requests, taps **"I prayed"** to
+encourage one another, and celebrates **answered prayers**. Requests persist in
+[Deno KV](https://docs.deno.com/deploy/kv/manual/) (a few realistic examples are seeded on first run
+so the wall is never empty).
+
+- **Works without JavaScript** — forms POST and the server replies with a 303 redirect. With JS, the
+  "I prayed" button updates the count in place and remembers your taps.
+- **Pastor / admin view:** visit `/prayer-wall?admin=KEY` to reveal "Mark answered" controls. Set
+  the key with the `PRAYER_ADMIN_KEY` environment variable (default `pastor` — **change this before
+  going live**).
+
+```sh
+PRAYER_ADMIN_KEY=your-secret deno task start
+```
 
 ## Quality
 
@@ -91,5 +110,7 @@ and the navigation. Update that one file to change the site's content.
 The app requests the minimum Deno permissions:
 
 - `--allow-net` — to serve HTTP
-- `--allow-read` — to read static assets from disk
-- `--allow-env` — to read the optional `PORT` variable
+- `--allow-read` — to read static assets and the Deno KV store
+- `--allow-write` — to persist Prayer Wall requests in Deno KV
+- `--allow-env` — to read `PORT` and `PRAYER_ADMIN_KEY`
+- `--unstable-kv` — enables Deno KV (used by the Prayer Wall)

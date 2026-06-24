@@ -114,6 +114,7 @@ export const NAV: NavItem[] = [
   { label: "About", href: "/about" },
   { label: "Services", href: "/services" },
   { label: "Ministries", href: "/ministries" },
+  { label: "Prayer Wall", href: "/prayer-wall" },
   { label: "Contact", href: "/contact" },
 ];
 
@@ -152,3 +153,20 @@ export const BENEDICTION: Verse = {
     "Now to him who is able to do immeasurably more than all we ask or imagine, according to his power that is at work within us — to him be glory.",
   reference: "Ephesians 3:20–21",
 };
+
+// The verse that anchors the Prayer Wall.
+export const PRAYER_VERSE: Verse = {
+  text: "Carry each other's burdens, and in this way you will fulfill the law of Christ.",
+  reference: "Galatians 6:2",
+};
+
+// The fixed set of categories offered on the Prayer Wall request form.
+export const PRAYER_CATEGORIES = [
+  "Healing",
+  "Family",
+  "Provision",
+  "Salvation",
+  "Guidance",
+  "Thanksgiving",
+  "Other",
+] as const;

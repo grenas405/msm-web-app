@@ -2,6 +2,31 @@
 
 All notable changes to the Mercy Seat Ministries web app are documented here.
 
+## [1.3.0] — 2026-06-23
+
+### Added
+
+- **Prayer Wall** (`/prayer-wall`) — an interactive, persistent feature where the congregation can:
+  - **Share a request** (optional name/anonymous, category, body) via a form that works with or
+    without JavaScript.
+  - Tap **"I prayed"** to increment a live counter; with JS this updates in place via a JSON
+    endpoint and remembers your taps in `localStorage`, otherwise it falls back to a POST + 303
+    redirect.
+  - Read **answered-prayer testimonies**, with a headline stats row (requests shared, prayers
+    offered, prayers answered).
+  - **Pastor/admin view** at `/prayer-wall?admin=KEY` adds "Mark answered" controls; the key is set
+    with the `PRAYER_ADMIN_KEY` env var (default `pastor`).
+- **`src/prayers.ts`** — the data layer, persisting requests in **Deno KV** with atomic, race-safe
+  pray-count increments. Seeds a few realistic example requests on first run so the wall is never
+  empty in a demo.
+- New `check`, `users`, and `spark` icons; Prayer Wall nav link; `PRAYER_VERSE` (Galatians 6:2) and
+  `PRAYER_CATEGORIES` in `content.ts`; full Prayer Wall styling.
+
+### Changed
+
+- The router is now async and dispatches both GET pages and the Prayer Wall's GET/POST endpoints.
+  `deno task start`/`dev` now run with `--unstable-kv --allow-write` for KV.
+
 ## [1.2.1] — 2026-06-23
 
 ### Removed

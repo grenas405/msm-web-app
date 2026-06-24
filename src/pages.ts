@@ -8,12 +8,15 @@ import {
   BENEDICTION,
   CONTACT,
   PILLARS,
+  PRAYER_CATEGORIES,
+  PRAYER_VERSE,
   SCRIPTURE,
   SERVICES,
   SITE,
   type Verse,
   VERSES,
 } from "./content.ts";
+import type { Prayer, PrayerStats } from "./prayers.ts";
 
 // ── Shared section builders ───────────────────────────────────────────────
 
@@ -459,6 +462,227 @@ export function notFound(): string {
     title: "Not Found",
     description: "Page not found.",
     path: "/404",
+    body,
+  });
+}
+
+// ── Prayer Wall ───────────────────────────────────────────────────────────
+
+export interface PrayerWallView {
+  active: Prayer[];
+  answered: Prayer[];
+  stats: PrayerStats;
+  isAdmin: boolean;
+  adminKey: string | null;
+}
+
+/** Human-friendly relative time, e.g. "3 hours ago". */
+function timeAgo(ts: number): string {
+  const seconds = Math.max(1, Math.floor((Date.now() - ts) / 1000));
+  const units: [number, string][] = [
+    [60, "second"],
+    [60, "minute"],
+    [24, "hour"],
+    [7, "day"],
+    [4.345, "week"],
+    [12, "month"],
+    [Number.POSITIVE_INFINITY, "year"],
+  ];
+  let value = seconds;
+  let unit = "second";
+  for (const [size, name] of units) {
+    if (value < size) {
+      unit = name;
+      break;
+    }
+    value = Math.floor(value / size);
+    unit = name;
+  }
+  const rounded = Math.floor(value);
+  return `${rounded} ${unit}${rounded === 1 ? "" : "s"} ago`;
+}
+
+/** Render the big counter for the stats row. */
+function statTile(value: number, label: string, ic: string): string {
+  return html`
+    <div class="stat-tile">
+      <span class="stat-icon">${raw(icon(ic).value)}</span>
+      <span class="stat-value">${value.toLocaleString("en-US")}</span>
+      <span class="stat-label">${label}</span>
+    </div>
+  `;
+}
+
+/** Render one active prayer request card. */
+function prayerCard(p: Prayer, view: PrayerWallView): string {
+  const who = p.name ? p.name : "Anonymous";
+  const adminAction = view.isAdmin
+    ? html`
+      <form class="answer-form" method="post" action="/prayer-wall/answer?admin=${encodeURIComponent(
+        view.adminKey ?? "",
+      )}">
+        <input type="hidden" name="id" value="${p.id}">
+        <button class="answer-btn" type="submit">
+          ${raw(icon("check").value)} Mark answered
+        </button>
+      </form>
+    `
+    : "";
+
+  return html`
+    <article class="prayer-card" data-id="${p.id}">
+      <div class="prayer-top">
+        <span class="chip">${p.category}</span>
+        <span class="prayer-time">${raw(timeAgo(p.createdAt))}</span>
+      </div>
+      <p class="prayer-body">${p.body}</p>
+      <div class="prayer-foot">
+        <span class="prayer-who">${raw(icon("users").value)} ${who}</span>
+        <form class="pray-form" method="post" action="/prayer-wall/pray">
+          <input type="hidden" name="id" value="${p.id}">
+          <button class="pray-btn" type="submit" data-id="${p.id}">
+            ${raw(icon("hands").value)}
+            <span class="pray-label">I prayed</span>
+            <span class="pray-count">${p.prayedCount}</span>
+          </button>
+        </form>
+      </div>
+      ${raw(adminAction)}
+    </article>
+  `;
+}
+
+/** Render one answered testimony card. */
+function testimonyCard(p: Prayer): string {
+  const who = p.name ? p.name : "Anonymous";
+  return html`
+    <article class="testimony-card">
+      <span class="answered-badge">${raw(icon("check").value)} Answered</span>
+      <p class="prayer-body">${p.body}</p>
+      <div class="prayer-foot">
+        <span class="prayer-who">${raw(icon("spark").value)} ${who}</span>
+        <span class="prayer-time">
+          ${p.prayedCount.toLocaleString("en-US")} prayed
+        </span>
+      </div>
+    </article>
+  `;
+}
+
+export function prayerWall(view: PrayerWallView): string {
+  const options = PRAYER_CATEGORIES.map((c) =>
+    html`
+      <option value="${c}">${c}</option>
+    `
+  )
+    .join("");
+
+  const activeList = view.active.length > 0
+    ? html`
+      <div class="prayer-grid">
+        ${raw(view.active.map((p) => prayerCard(p, view)).join(""))}
+      </div>
+    `
+    : html`
+      <p class="empty-note">
+        No active requests right now. Be the first to share — your church is ready to pray.
+      </p>
+    `;
+
+  const testimonies = view.answered.length > 0
+    ? html`
+      <section class="section section-tint">
+        <div class="container">
+          <div class="section-head">
+            <p class="eyebrow">Answered Prayers</p>
+            <h2>Giving thanks together.</h2>
+            <p class="section-lead">
+              Every answered prayer is a testimony of God's faithfulness. To Him be the glory.
+            </p>
+          </div>
+          <div class="prayer-grid">
+            ${raw(view.answered.map(testimonyCard).join(""))}
+          </div>
+        </div>
+      </section>
+    `
+    : "";
+
+  const body = html`
+    <section class="page-hero">
+      <div class="container">
+        <p class="eyebrow">Prayer Wall</p>
+        <h1>Carry one another's burdens.</h1>
+        <p class="page-hero-lead">
+          Share what's on your heart, and join the church in praying over every request. You're never
+          meant to carry it alone.
+        </p>
+      </div>
+    </section>
+
+    <section class="section prayer-stats-section">
+      <div class="container">
+        <div class="stat-row">
+          ${raw(statTile(view.stats.requests, "Requests shared", "hands"))} ${raw(
+            statTile(view.stats.prayersOffered, "Prayers offered", "heart"),
+          )} ${raw(statTile(view.stats.answered, "Prayers answered", "check"))}
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="wall">
+      <div class="container prayer-layout">
+        <aside class="prayer-form-card">
+          <h2>Share a request</h2>
+          <p class="muted">
+            Posts are visible to the whole church. Share anonymously if you'd prefer.
+          </p>
+          <form method="post" action="/prayer-wall">
+            <label>
+              <span>Your name <em>(optional)</em></span>
+              <input type="text" name="name" maxlength="60" placeholder="Leave blank to stay anonymous">
+            </label>
+            <label>
+              <span>Category</span>
+              <select name="category">${raw(options)}</select>
+            </label>
+            <label>
+              <span>Your prayer request</span>
+              <textarea
+                name="body"
+                rows="5"
+                maxlength="600"
+                required
+                placeholder="What can we pray with you about?"
+              ></textarea>
+            </label>
+            <button class="btn btn-lg" type="submit">
+              ${raw(icon("hands").value)} Post to the Wall
+            </button>
+          </form>
+          <p class="prayer-verse">
+            &ldquo;${PRAYER_VERSE.text}&rdquo;<br><cite>— ${PRAYER_VERSE.reference}</cite>
+          </p>
+        </aside>
+
+        <div class="prayer-feed">
+          <div class="section-head feed-head">
+            <h2>Praying now</h2>
+            <p class="section-lead">Tap “I prayed” to let others know they're not alone.</p>
+          </div>
+          ${raw(activeList)}
+        </div>
+      </div>
+    </section>
+
+    ${raw(testimonies)} ${raw(scriptureBanner(PRAYER_VERSE))}
+  `;
+
+  return page({
+    title: "Prayer Wall",
+    description:
+      "Share a prayer request with Mercy Seat Ministries OKC and join the church in praying for one another. Read testimonies of answered prayer.",
+    path: "/prayer-wall",
     body,
   });
 }
