@@ -1,0 +1,52 @@
+# systemd unit for the Mercy Seat Ministries Deno web app.
+#
+# Install:
+#   sudo cp deploy/systemd/msm-web-app.service /etc/systemd/system/
+#   sudo systemctl daemon-reload
+#   sudo install -o sysadmin -g sysadmin -d /var/lib/msm-web-app /var/cache/msm-web-app
+#   sudo -u sysadmin env PATH=/home/sysadmin/.deno/bin:/usr/local/bin:/usr/bin:/bin MSM_KV_PATH=/var/lib/msm-web-app/msm.db deno task set-password
+#   sudo systemctl enable --now msm-web-app
+#   sudo journalctl -u msm-web-app -f
+#
+# This unit assumes the production checkout is:
+#   /home/sysadmin/.local/src/development/msm-web-app
+
+[Unit]
+Description=Mercy Seat Ministries web app
+Documentation=file:/home/sysadmin/.local/src/development/msm-web-app/README.md
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=simple
+User=sysadmin
+WorkingDirectory=/home/sysadmin/.local/src/development/msm-web-app
+
+Environment=PATH=/home/sysadmin/.deno/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+Environment=DENO_DIR=/var/cache/msm-web-app/deno
+Environment=HOST=127.0.0.1
+Environment=PORT=8004
+Environment=MSM_KV_PATH=/var/lib/msm-web-app/msm.db
+
+StateDirectory=msm-web-app
+CacheDirectory=msm-web-app
+
+ExecStart=/usr/bin/env deno task start
+Restart=on-failure
+RestartSec=5s
+KillSignal=SIGINT
+TimeoutStopSec=30s
+SyslogIdentifier=msm-web-app
+
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=full
+ProtectControlGroups=true
+ProtectKernelModules=true
+ProtectKernelTunables=true
+RestrictRealtime=true
+RestrictSUIDSGID=true
+LockPersonality=true
+
+[Install]
+WantedBy=multi-user.target

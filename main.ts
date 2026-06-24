@@ -14,6 +14,7 @@ import { seedIfEmpty } from "./src/prayers.ts";
 // new URL(...).pathname would prepend a leading slash on Windows ("/C:/...")
 // and break asset reads.
 const STATIC_ROOT = `${import.meta.dirname}/static`;
+const HOSTNAME = Deno.env.get("HOST") ?? "0.0.0.0";
 const PORT = Number(Deno.env.get("PORT") ?? 8000);
 
 /** Route a single request to static files or the page router. */
@@ -33,7 +34,7 @@ async function handler(request: Request): Promise<Response> {
 
 if (import.meta.main) {
   await seedIfEmpty();
-  Deno.serve({ port: PORT, onListen }, handler);
+  Deno.serve({ hostname: HOSTNAME, port: PORT, onListen }, handler);
 }
 
 /** Friendly startup banner. */

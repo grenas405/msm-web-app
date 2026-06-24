@@ -20,6 +20,12 @@ Set a custom port with the `PORT` environment variable:
 PORT=3000 deno task start
 ```
 
+Bind to a specific interface with `HOST`:
+
+```sh
+HOST=127.0.0.1 PORT=8004 deno task start
+```
+
 ## Design philosophy
 
 The codebase follows the **Unix philosophy**: small modules that each do one thing, composed through
@@ -151,6 +157,27 @@ deno lint            # lint
 deno fmt             # format
 ```
 
+## Systemd
+
+A production unit is provided at `deploy/systemd/msm-web-app.service`. It assumes the checkout path
+is `/home/sysadmin/.local/src/development/msm-web-app`, runs as `sysadmin`, listens on
+`127.0.0.1:8004`, and stores Deno KV data in `/var/lib/msm-web-app/msm.db`.
+
+```sh
+sudo cp deploy/systemd/msm-web-app.service /etc/systemd/system/
+sudo systemctl daemon-reload
+sudo install -o sysadmin -g sysadmin -d /var/lib/msm-web-app /var/cache/msm-web-app
+```
+
+Set the admin password against the same KV path used by the service while the service is stopped:
+
+```sh
+sudo -u sysadmin env PATH=/home/sysadmin/.deno/bin:/usr/local/bin:/usr/bin:/bin \
+  MSM_KV_PATH=/var/lib/msm-web-app/msm.db deno task set-password
+sudo systemctl enable --now msm-web-app
+sudo journalctl -u msm-web-app -f
+```
+
 ## Content & data
 
 All editable text lives in `src/content.ts` — service times, contact details, the mission statement,
@@ -168,5 +195,5 @@ The app requests the minimum Deno permissions:
 - `--allow-net` — to serve HTTP
 - `--allow-read` — to read static assets and the Deno KV store
 - `--allow-write` — to persist Prayer Wall requests, the admin password, and sessions
-- `--allow-env` — to read `PORT` and `MSM_KV_PATH`
+- `--allow-env` — to read `HOST`, `PORT`, and `MSM_KV_PATH`
 - `--unstable-kv` — enables Deno KV (Prayer Wall + admin auth)
