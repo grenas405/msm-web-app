@@ -27,6 +27,7 @@ Environment=DENO_DIR=/var/cache/msm-web-app/deno
 Environment=HOST=127.0.0.1
 Environment=PORT=8004
 Environment=MSM_KV_PATH=/var/lib/msm-web-app/msm.db
+Environment=MSM_DATA_DIR=/var/lib/msm-web-app/data
 
 StateDirectory=msm-web-app
 CacheDirectory=msm-web-app
