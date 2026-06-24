@@ -2,6 +2,21 @@
 
 All notable changes to the Mercy Seat Ministries web app are documented here.
 
+## [1.5.0] — 2026-06-23
+
+### Changed
+
+- **Reimagined the admin dashboard** as a daily ministry view for Pastor James:
+  - A **personal, time-aware greeting** ("Good morning, Pastor James") with the full date and the
+    ministry brand mark.
+  - A **rotating shepherd's encouragement verse** (1 Peter 5:2, Galatians 6:9, Numbers 6:24–25, 1
+    Peter 5:10, Matthew 25:23) in a gold-on-navy banner.
+  - **Impact-framed stats** — a gold "Awaiting prayer" tile plus requests, prayers offered, and
+    answered, with a one-line summary of the church's collective prayer.
+  - A **"Most prayed" highlight** on the top active request, a count badge on the section heading, a
+    per-request prayed tally, and a celebratory **"Recently answered"** section.
+- Added `SHEPHERD_VERSES` to `content.ts`; `statTile` gained a gold-highlight variant.
+
 ## [1.4.0] — 2026-06-23
 
 ### Added

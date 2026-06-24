@@ -170,3 +170,32 @@ export const PRAYER_CATEGORIES = [
   "Thanksgiving",
   "Other",
 ] as const;
+
+// Encouragements shown to the pastor on the admin dashboard, rotating by day.
+export const SHEPHERD_VERSES: Verse[] = [
+  {
+    text:
+      "Be shepherds of God's flock that is under your care, watching over them — not because you must, but because you are willing, as God wants you to be.",
+    reference: "1 Peter 5:2",
+  },
+  {
+    text:
+      "Let us not become weary in doing good, for at the proper time we will reap a harvest if we do not give up.",
+    reference: "Galatians 6:9",
+  },
+  {
+    text:
+      "The Lord bless you and keep you; the Lord make his face shine on you and be gracious to you.",
+    reference: "Numbers 6:24–25",
+  },
+  {
+    text:
+      "And the God of all grace will himself restore you and make you strong, firm and steadfast.",
+    reference: "1 Peter 5:10",
+  },
+  {
+    text:
+      "His master replied, 'Well done, good and faithful servant! Come and share your master's happiness!'",
+    reference: "Matthew 25:23",
+  },
+];

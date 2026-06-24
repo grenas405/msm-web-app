@@ -12,6 +12,7 @@ import {
   PRAYER_VERSE,
   SCRIPTURE,
   SERVICES,
+  SHEPHERD_VERSES,
   SITE,
   type Verse,
   VERSES,
@@ -511,9 +512,9 @@ function timeAgo(ts: number): string {
 }
 
 /** Render the big counter for the stats row. */
-function statTile(value: number, label: string, ic: string): string {
+function statTile(value: number, label: string, ic: string, highlight = false): string {
   return html`
-    <div class="stat-tile">
+    <div class="stat-tile${highlight ? " stat-tile-gold" : ""}">
       <span class="stat-icon">${raw(icon(ic).value)}</span>
       <span class="stat-value">${value.toLocaleString("en-US")}</span>
       <span class="stat-label">${label}</span>
@@ -742,18 +743,58 @@ export interface AdminDashboardView {
   stats: PrayerStats;
 }
 
-/** One manageable request row in the admin dashboard. */
-function adminRow(p: Prayer): string {
+/** A time-of-day greeting based on the server clock. */
+function greeting(): string {
+  const hour = new Date().getHours();
+  if (hour < 12) return "Good morning";
+  if (hour < 17) return "Good afternoon";
+  return "Good evening";
+}
+
+/** "Pastor James Olufowote" -> "Pastor James" (title + first name). */
+function pastorShortName(): string {
+  return CONTACT.pastor.split(" ").slice(0, 2).join(" ");
+}
+
+/** Today's date, written out long-form. */
+function todayLong(): string {
+  return new Date().toLocaleDateString("en-US", {
+    weekday: "long",
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
+}
+
+/** Pick a shepherd's verse that changes once per day. */
+function shepherdVerse(): Verse {
+  const dayIndex = Math.floor(Date.now() / 86_400_000);
+  return SHEPHERD_VERSES[dayIndex % SHEPHERD_VERSES.length];
+}
+
+/** One manageable request row. `topId` gets a "most prayed" highlight. */
+function adminRow(p: Prayer, topId: string | null): string {
   const who = p.name ? p.name : "Anonymous";
+  const ribbon = p.id === topId && p.prayedCount > 0
+    ? html`
+      <span class="top-ribbon">${raw(icon("spark").value)} Most prayed</span>
+    `
+    : "";
   return html`
-    <article class="admin-row">
+    <article class="admin-row${p.id === topId && p.prayedCount > 0 ? " admin-row-top" : ""}">
       <div class="admin-row-main">
         <div class="prayer-top">
           <span class="chip">${p.category}</span>
-          <span class="prayer-time">${raw(timeAgo(p.createdAt))} · ${p.prayedCount} prayed</span>
+          ${raw(ribbon)}
+          <span class="prayer-time">${raw(timeAgo(p.createdAt))}</span>
         </div>
         <p class="prayer-body">${p.body}</p>
-        <span class="prayer-who">${raw(icon("users").value)} ${who}</span>
+        <div class="admin-row-meta">
+          <span class="prayer-who">${raw(icon("users").value)} ${who}</span>
+          <span class="pray-tally">${raw(icon("hands").value)} ${p.prayedCount.toLocaleString(
+            "en-US",
+          )} prayed</span>
+        </div>
       </div>
       <form method="post" action="/admin/answer" class="admin-row-action">
         <input type="hidden" name="id" value="${p.id}">
@@ -763,23 +804,79 @@ function adminRow(p: Prayer): string {
   `;
 }
 
-/** The protected admin dashboard for managing the Prayer Wall. */
+/** A compact, celebratory card for an answered request. */
+function adminAnsweredCard(p: Prayer): string {
+  const who = p.name ? p.name : "Anonymous";
+  const when = p.answeredAt ? timeAgo(p.answeredAt) : "";
+  return html`
+    <article class="admin-answered">
+      <span class="answered-badge">${raw(icon("check").value)} Answered ${raw(when)}</span>
+      <p class="prayer-body">${p.body}</p>
+      <span class="prayer-who">${raw(icon("spark").value)} ${who}</span>
+    </article>
+  `;
+}
+
+/** The protected admin dashboard — a daily ministry view for the pastor. */
 export function adminDashboard(view: AdminDashboardView): string {
+  const verse = shepherdVerse();
+  const awaiting = view.active.length;
+
+  // Find the most-prayed active request to highlight.
+  const topId = view.active.reduce<string | null>(
+    (top, p) => {
+      const topCount = view.active.find((x) => x.id === top)?.prayedCount ?? -1;
+      return p.prayedCount > topCount ? p.id : top;
+    },
+    view.active[0]?.id ?? null,
+  );
+
   const rows = view.active.length > 0
     ? html`
-      <div class="admin-list">${raw(view.active.map(adminRow).join(""))}</div>
+      <div class="admin-list">
+        ${raw(view.active.map((p) => adminRow(p, topId)).join(""))}
+      </div>
     `
     : html`
-      <p class="empty-note">No active requests to manage right now.</p>
+      <p class="empty-note">
+        All caught up — no requests are awaiting prayer right now. 🙏
+      </p>
     `;
+
+  const answered = view.answered.length > 0
+    ? html`
+      <div class="section-head feed-head admin-section-head">
+        <h2>Recently answered</h2>
+        <p class="section-lead">Rejoice with those who rejoice — God has been faithful.</p>
+      </div>
+      <div class="admin-answered-grid">
+        ${raw(view.answered.slice(0, 6).map(adminAnsweredCard).join(""))}
+      </div>
+    `
+    : "";
+
+  const impact = view.stats.prayersOffered > 0
+    ? html`
+      <p class="admin-impact">
+        Together, your church has lifted up
+        <strong>${view.stats.prayersOffered.toLocaleString("en-US")}</strong> prayers across
+        <strong>${view.stats.requests.toLocaleString("en-US")}</strong> requests — and celebrated
+        <strong>${view.stats.answered.toLocaleString("en-US")}</strong> answered.
+      </p>
+    `
+    : "";
 
   const body = html`
     <section class="admin-shell">
       <div class="container">
         <header class="admin-bar">
-          <div>
-            <p class="eyebrow">Administration</p>
-            <h1>Prayer Wall</h1>
+          <div class="admin-brand">
+            <span class="admin-mark">${raw(icon("flame").value)}</span>
+            <div>
+              <p class="eyebrow">${SITE.name} · Prayer Wall</p>
+              <h1>${greeting()}, ${pastorShortName()}</h1>
+              <p class="admin-date">${todayLong()}</p>
+            </div>
           </div>
           <div class="admin-bar-actions">
             <a class="btn btn-sm btn-outline" href="/prayer-wall" target="_blank" rel="noopener">
@@ -791,17 +888,30 @@ export function adminDashboard(view: AdminDashboardView): string {
           </div>
         </header>
 
-        <div class="stat-row admin-stats">
-          ${raw(statTile(view.stats.requests, "Requests shared", "hands"))} ${raw(
-            statTile(view.stats.prayersOffered, "Prayers offered", "heart"),
-          )} ${raw(statTile(view.stats.answered, "Prayers answered", "check"))}
+        <div class="admin-verse">
+          <span class="admin-verse-icon">${raw(icon("book").value)}</span>
+          <div>
+            <p class="admin-verse-text">&ldquo;${verse.text}&rdquo;</p>
+            <p class="admin-verse-ref">— ${verse.reference}</p>
+          </div>
         </div>
 
-        <div class="section-head feed-head admin-section-head">
-          <h2>Active requests</h2>
-          <p class="section-lead">Mark a request answered to move it to the testimonies.</p>
+        <div class="stat-row admin-stats">
+          ${raw(statTile(awaiting, "Awaiting prayer", "hands", true))} ${raw(
+            statTile(view.stats.requests, "Requests shared", "users"),
+          )} ${raw(statTile(view.stats.prayersOffered, "Prayers offered", "heart"))} ${raw(
+            statTile(view.stats.answered, "Prayers answered", "check"),
+          )}
         </div>
-        ${raw(rows)}
+        ${raw(impact)}
+
+        <div class="section-head feed-head admin-section-head">
+          <h2>Requests awaiting prayer ${awaiting > 0
+            ? raw(`<span class="count-badge">${awaiting}</span>`)
+            : ""}</h2>
+          <p class="section-lead">Mark a request answered to move it to the public testimonies.</p>
+        </div>
+        ${raw(rows)} ${raw(answered)}
       </div>
     </section>
   `;
