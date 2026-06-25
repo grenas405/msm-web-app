@@ -7,7 +7,7 @@
     "dev": "deno run --watch --unstable-kv --allow-net --allow-read --allow-write --allow-env main.ts",
     "set-password": "deno run --unstable-kv --allow-read --allow-write --allow-env scripts/set-password.ts",
     "reset": "deno run --unstable-kv --allow-read --allow-write --allow-env scripts/reset-db.ts",
-    "import-lessons": "deno run --unstable-kv --allow-net --allow-read --allow-write --allow-env scripts/import-lessons.ts"
+    "import-lessons": "deno run --unstable-kv --allow-net --allow-read --allow-write --allow-env --allow-run=curl scripts/import-lessons.ts"
   },
   "imports": {
     "@std/http": "jsr:@std/http@^1.0.13"

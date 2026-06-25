@@ -223,9 +223,50 @@ const FILES = [
   "john1",
 ];
 
+const UA = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 " +
+  "(KHTML, like Gecko) Chrome/124.0 Safari/537.36";
+const REFERER = "https://msmokc.weebly.com/service-times.html";
+
 /** ISO date (YYYY-MM-DD) for the lesson at a given position. */
 function dateFor(index: number): string {
   return new Date(START + index * WEEK).toISOString().slice(0, 10);
+}
+
+/**
+ * Download a PDF. Weebly's CDN blocks Deno's network fingerprint with a 403,
+ * so we download through curl (present on the VPS) which gets through. Falls
+ * back to fetch only if curl isn't installed.
+ */
+async function download(url: string): Promise<Uint8Array | null> {
+  try {
+    const out = await new Deno.Command("curl", {
+      args: [
+        "-sSL",
+        "--fail",
+        "--retry",
+        "3",
+        "--retry-delay",
+        "2",
+        "-A",
+        UA,
+        "-e",
+        REFERER,
+        "-H",
+        "accept: application/pdf,*/*",
+        url,
+      ],
+      stdout: "piped",
+      stderr: "null",
+    }).output();
+    if (out.code === 0 && out.stdout.length > 0) return out.stdout;
+    return null;
+  } catch {
+    // curl not found — try Deno fetch with browser headers as a fallback.
+    const res = await fetch(url, {
+      headers: { "user-agent": UA, "accept": "application/pdf,*/*", "referer": REFERER },
+    });
+    return res.ok ? new Uint8Array(await res.arrayBuffer()) : null;
+  }
 }
 
 // Alignment guard: the last file must land on the known final Sunday.
@@ -259,26 +300,17 @@ for (let i = 0; i < Math.min(limit, FILES.length); i++) {
     continue;
   }
   try {
-    // Weebly's CDN returns 403 to non-browser clients, so look like a browser.
-    const res = await fetch(`${BASE}${file}.pdf`, {
-      headers: {
-        "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 " +
-          "(KHTML, like Gecko) Chrome/124.0 Safari/537.36",
-        "accept": "application/pdf,*/*",
-        "referer": "https://msmokc.weebly.com/service-times.html",
-      },
-    });
-    if (!res.ok) {
-      console.error(`✗ ${date} ${file}.pdf (HTTP ${res.status})`);
+    const bytes = await download(`${BASE}${file}.pdf`);
+    if (!bytes) {
+      console.error(`✗ ${date} ${file}.pdf (download failed)`);
       failed++;
       continue;
     }
-    const bytes = new Uint8Array(await res.arrayBuffer());
     await addLesson({ title: "Sunday School Lesson", date }, bytes);
     await kv.set(marker, true);
     added++;
-    if (added % 20 === 0) console.log(`… ${added} imported`);
-    await new Promise((r) => setTimeout(r, 120)); // be gentle on the old host
+    console.log(`✓ ${date} ${file}.pdf (${(bytes.length / 1024 / 1024).toFixed(1)} MB)`);
+    await new Promise((r) => setTimeout(r, 250)); // be gentle on the old host
   } catch (e) {
     console.error(`✗ ${date} ${file}.pdf: ${(e as Error).message}`);
     failed++;
