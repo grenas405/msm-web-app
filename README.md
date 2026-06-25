@@ -112,7 +112,7 @@ mark requests as answered. When marking one answered, the pastor can record a **
 ("what did God do?") — it becomes the headline of the public testimony. The dashboard also greets
 the pastor by name and cycles encouraging scriptures with a typing animation.
 
-The admin area has two tabs:
+The admin area has three tabs:
 
 - **Prayer Wall** (`/admin`) — manage requests and answered testimonies.
 - **Sunday School** (`/admin/lessons`) — upload a lesson PDF with a title and date, and delete old
