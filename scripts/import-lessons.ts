@@ -259,7 +259,15 @@ for (let i = 0; i < Math.min(limit, FILES.length); i++) {
     continue;
   }
   try {
-    const res = await fetch(`${BASE}${file}.pdf`);
+    // Weebly's CDN returns 403 to non-browser clients, so look like a browser.
+    const res = await fetch(`${BASE}${file}.pdf`, {
+      headers: {
+        "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 " +
+          "(KHTML, like Gecko) Chrome/124.0 Safari/537.36",
+        "accept": "application/pdf,*/*",
+        "referer": "https://msmokc.weebly.com/service-times.html",
+      },
+    });
     if (!res.ok) {
       console.error(`✗ ${date} ${file}.pdf (HTTP ${res.status})`);
       failed++;
