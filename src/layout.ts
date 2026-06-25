@@ -2,7 +2,8 @@
 // One function, `page()`, wraps any body content in the full document.
 
 import { html, raw } from "./html.ts";
-import { CONTACT, NAV, SITE } from "./content.ts";
+import { NAV, SITE } from "./content.ts";
+import { contact } from "./settings.ts";
 import { icon } from "./icons.ts";
 
 export interface PageOptions {
@@ -119,15 +120,15 @@ function siteFooter(): string {
         <div class="footer-col">
           <h3>Visit</h3>
           <p>
-            ${CONTACT.address.line1}<br>${CONTACT.address.detail}<br>
-            ${CONTACT.address.city}, ${CONTACT.address.state} ${CONTACT.address.zip}
+            ${contact().address.line1}<br>${contact().address.detail}<br>
+            ${contact().address.city}, ${contact().address.state} ${contact().address.zip}
           </p>
         </div>
         <div class="footer-col">
           <h3>Connect</h3>
           <p>
-            <a href="${CONTACT.phoneHref}">${CONTACT.phone}</a><br>
-            <a href="mailto:${CONTACT.email}">${CONTACT.email}</a>
+            <a href="${contact().phones[0].href}">${contact().phones[0].display}</a><br>
+            <a href="mailto:${contact().email}">${contact().email}</a>
           </p>
         </div>
         <div class="footer-col">

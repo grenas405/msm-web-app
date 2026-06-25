@@ -8,6 +8,7 @@
 import { serveDir } from "@std/http/file-server";
 import { route } from "./src/router.ts";
 import { seedIfEmpty } from "./src/prayers.ts";
+import { loadContact } from "./src/settings.ts";
 
 // import.meta.dirname is the directory of this module as a native OS path,
 // so this resolves correctly on Windows (C:\...) as well as POSIX. Using
@@ -34,6 +35,7 @@ async function handler(request: Request): Promise<Response> {
 
 if (import.meta.main) {
   await seedIfEmpty();
+  await loadContact();
   Deno.serve({ hostname: HOSTNAME, port: PORT, onListen }, handler);
 }
 

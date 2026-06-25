@@ -2,6 +2,17 @@
 
 All notable changes to the Mercy Seat Ministries web app are documented here.
 
+## [1.8.0] — 2026-06-24
+
+### Added
+
+- **Editable contact details.** A new **Contact Info** admin tab (`/admin/contact`) lets the pastor
+  update the email, phone numbers (one per line — `tel:` links are generated automatically), street
+  address, Zoom link, and Zelle giving email at any time, with no code changes. Edits go live
+  instantly across the Contact page, site footer, and Giving page, and persist in Deno KV.
+  `content.ts` provides the defaults; `src/settings.ts` holds the live values (loaded at startup,
+  refreshed on save).
+
 ## [1.7.0] — 2026-06-24
 
 Changes requested by the pastor.

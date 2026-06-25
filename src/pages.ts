@@ -6,9 +6,7 @@ import { page } from "./layout.ts";
 import { icon } from "./icons.ts";
 import {
   BENEDICTION,
-  CONTACT,
   FELLOWSHIP_VERSE,
-  GIVING,
   PILLARS,
   PRAYER_CATEGORIES,
   PRAYER_VERSE,
@@ -19,6 +17,7 @@ import {
   type Verse,
   VERSES,
 } from "./content.ts";
+import { contact as contactInfo, type ContactInfo } from "./settings.ts";
 import type { Lesson } from "./lessons.ts";
 import type { Prayer, PrayerStats } from "./prayers.ts";
 
@@ -125,7 +124,7 @@ export function home(): string {
         </div>
         <ul class="hero-facts">
           <li>${raw(icon("clock").value)}<span>Sundays at 10:15 AM</span></li>
-          <li>${raw(icon("pin").value)}<span>${CONTACT.address.city}, ${CONTACT.address
+          <li>${raw(icon("pin").value)}<span>${contactInfo().address.city}, ${contactInfo().address
             .state}</span></li>
           <li>${raw(icon("video").value)}<span>Streaming live on Zoom</span></li>
         </ul>
@@ -239,7 +238,7 @@ export function about(): string {
         <div class="leader-avatar">${raw(icon("flame").value)}</div>
         <div>
           <p class="eyebrow">Our Shepherd</p>
-          <h2>${CONTACT.pastor}</h2>
+          <h2>${contactInfo().pastor}</h2>
           <p>
             Our pastor leads Mercy Seat Ministries with a deep love for Scripture and a heart for the
             people of Oklahoma City. You are warmly invited to reach out, ask questions, and visit any
@@ -288,22 +287,24 @@ export function services(): string {
           <span class="pillar-icon">${raw(icon("pin").value)}</span>
           <h3>In Person</h3>
           <p>
-            ${CONTACT.address.line1}, ${CONTACT.address.detail}<br>
-            ${CONTACT.address.city}, ${CONTACT.address.state} ${CONTACT.address.zip}
+            ${contactInfo().address.line1}, ${contactInfo().address.detail}<br>
+            ${contactInfo().address.city}, ${contactInfo().address.state} ${contactInfo().address
+              .zip}
           </p>
         </article>
         <article class="way-card">
           <span class="pillar-icon">${raw(icon("video").value)}</span>
           <h3>Online via Zoom</h3>
           <p>Worship with us from anywhere in the world.</p>
-          <a class="btn btn-sm" href="${CONTACT.zoom}" target="_blank" rel="noopener">
+          <a class="btn btn-sm" href="${contactInfo().zoom}" target="_blank" rel="noopener">
             Join Zoom ${raw(icon("arrow").value)}</a>
         </article>
         <article class="way-card">
           <span class="pillar-icon">${raw(icon("phone").value)}</span>
           <h3>By Phone</h3>
           <p>Prefer to call in? Reach us for dial-in details.</p>
-          <a class="btn btn-sm" href="${CONTACT.phoneHref}">${CONTACT.phone}</a>
+          <a class="btn btn-sm" href="${contactInfo().phones[0].href}">${contactInfo().phones[0]
+            .display}</a>
         </article>
       </div>
     </section>
@@ -381,7 +382,7 @@ export function ministries(): string {
 
 export function contact(): string {
   const mapQuery = encodeURIComponent(
-    `${CONTACT.address.line1}, ${CONTACT.address.city}, ${CONTACT.address.state} ${CONTACT.address.zip}`,
+    `${contactInfo().address.line1}, ${contactInfo().address.city}, ${contactInfo().address.state} ${contactInfo().address.zip}`,
   );
 
   const body = html`
@@ -407,7 +408,7 @@ export function contact(): string {
         >
         <div class="pastor-words">
           <p class="eyebrow">Your Pastor &amp; First Lady</p>
-          <h2>${CONTACT.pastor} &amp; Folake</h2>
+          <h2>${contactInfo().pastor} &amp; Folake</h2>
           <p>
             It would be our joy to welcome you to Mercy Seat Ministries. Whether you have a question, a
             prayer need, or simply want to visit, please don't hesitate to reach out — our door and
@@ -425,8 +426,9 @@ export function contact(): string {
             <div>
               <h3>Worship Location</h3>
               <p>
-                ${CONTACT.address.line1}, ${CONTACT.address.detail}<br>
-                ${CONTACT.address.city}, ${CONTACT.address.state} ${CONTACT.address.zip}
+                ${contactInfo().address.line1}, ${contactInfo().address.detail}<br>
+                ${contactInfo().address.city}, ${contactInfo().address.state} ${contactInfo()
+                  .address.zip}
               </p>
             </div>
           </div>
@@ -435,27 +437,27 @@ export function contact(): string {
             <div>
               <h3>Call or Text Us</h3>
               ${raw(
-                CONTACT.phones.map((ph) =>
+                contactInfo().phones.map((ph) =>
                   html`
                     <p><a href="${ph.href}">${ph.display}</a></p>
                   `
                 ).join(""),
               )}
-              <p class="muted">${CONTACT.pastor}</p>
+              <p class="muted">${contactInfo().pastor}</p>
             </div>
           </div>
           <div class="contact-row">
             <span class="contact-icon">${raw(icon("mail").value)}</span>
             <div>
               <h3>Email</h3>
-              <p><a href="mailto:${CONTACT.email}">${CONTACT.email}</a></p>
+              <p><a href="mailto:${contactInfo().email}">${contactInfo().email}</a></p>
             </div>
           </div>
           <div class="contact-row">
             <span class="contact-icon">${raw(icon("video").value)}</span>
             <div>
               <h3>Join Online</h3>
-              <p><a href="${CONTACT
+              <p><a href="${contactInfo()
                 .zoom}" target="_blank" rel="noopener">Worship with us on Zoom</a></p>
             </div>
           </div>
@@ -512,8 +514,8 @@ export function giving(): string {
             <li>Add Mercy Seat Ministries using the email below.</li>
             <li>Enter your amount and send. That's it!</li>
           </ol>
-          <a class="give-zelle" href="mailto:${GIVING.zelleEmail}">
-            ${raw(icon("mail").value)} ${GIVING.zelleEmail}
+          <a class="give-zelle" href="mailto:${contactInfo().zelleEmail}">
+            ${raw(icon("mail").value)} ${contactInfo().zelleEmail}
           </a>
           <p class="muted">Our Zelle account is registered to this email.</p>
         </article>
@@ -936,7 +938,7 @@ function greeting(): string {
 
 /** "Pastor James Olufowote" -> "Pastor James" (title + first name). */
 function pastorShortName(): string {
-  return CONTACT.pastor.split(" ").slice(0, 2).join(" ");
+  return contactInfo().pastor.split(" ").slice(0, 2).join(" ");
 }
 
 /** Today's date, written out long-form. */
@@ -1138,7 +1140,7 @@ export function adminDashboard(view: AdminDashboardView): string {
 }
 
 /** Tab navigation shared by the admin screens. */
-function adminTabs(active: "prayer" | "lessons"): string {
+function adminTabs(active: "prayer" | "lessons" | "contact"): string {
   const tab = (id: string, href: string, label: string) =>
     html`
       <a class="admin-tab${active === id ? " active" : ""}" href="${href}">${label}</a>
@@ -1147,7 +1149,7 @@ function adminTabs(active: "prayer" | "lessons"): string {
     <nav class="admin-tabs" aria-label="Admin sections">
       ${raw(tab("prayer", "/admin", "Prayer Wall"))} ${raw(
         tab("lessons", "/admin/lessons", "Sunday School"),
-      )}
+      )} ${raw(tab("contact", "/admin/contact", "Contact Info"))}
     </nav>
   `;
 }
@@ -1272,6 +1274,110 @@ export function adminLessons(view: AdminLessonsView): string {
     title: "Sunday School Admin",
     description: "Manage Sunday School lessons.",
     path: "/admin/lessons",
+    body,
+    bare: true,
+  });
+}
+
+export interface AdminContactView {
+  info: ContactInfo;
+  saved: boolean;
+}
+
+/** Protected admin page to edit the church's contact details. */
+export function adminContact(view: AdminContactView): string {
+  const c = view.info;
+  const phonesText = c.phones.map((p) => p.display).join("\n");
+  const notice = view.saved
+    ? html`
+      <p class="admin-saved" role="status">
+        ${raw(icon("check").value)} Saved — your changes are live on the site.
+      </p>
+    `
+    : "";
+
+  const body = html`
+    <section class="admin-shell">
+      <div class="container">
+        <header class="admin-bar">
+          <div class="admin-brand">
+            <span class="admin-mark">${raw(icon("phone").value)}</span>
+            <div>
+              <p class="eyebrow">${SITE.name} · Contact Info</p>
+              <h1>Contact Details</h1>
+              <p class="admin-date">Edit what visitors see across the site</p>
+            </div>
+          </div>
+          <div class="admin-bar-actions">
+            <a class="btn btn-sm btn-outline" href="/contact" target="_blank" rel="noopener">
+              View page ${raw(icon("arrow").value)}
+            </a>
+            <form method="post" action="/admin/logout">
+              <button class="btn btn-sm" type="submit">Sign out</button>
+            </form>
+          </div>
+        </header>
+
+        ${raw(adminTabs("contact"))}
+
+        <div class="upload-card">
+          <h2>Edit contact details</h2>
+          <p class="muted">These update the Contact page, footer, and Giving page everywhere.</p>
+          ${raw(notice)}
+          <form method="post" action="/admin/contact" class="contact-edit-form">
+            <label>
+              <span>Pastor / leader name</span>
+              <input type="text" name="pastor" maxlength="80" value="${c.pastor}">
+            </label>
+            <label>
+              <span>Email</span>
+              <input type="email" name="email" maxlength="120" value="${c.email}">
+            </label>
+            <label class="full">
+              <span>Phone numbers <em>(one per line)</em></span>
+              <textarea name="phones" rows="3" placeholder="(405) 555-1234">${phonesText}</textarea>
+            </label>
+            <label class="full">
+              <span>Street address</span>
+              <input type="text" name="line1" maxlength="120" value="${c.address.line1}">
+            </label>
+            <label>
+              <span>Address detail <em>(e.g. Conference Room)</em></span>
+              <input type="text" name="detail" maxlength="80" value="${c.address.detail}">
+            </label>
+            <label>
+              <span>City</span>
+              <input type="text" name="city" maxlength="80" value="${c.address.city}">
+            </label>
+            <label>
+              <span>State</span>
+              <input type="text" name="state" maxlength="20" value="${c.address.state}">
+            </label>
+            <label>
+              <span>ZIP</span>
+              <input type="text" name="zip" maxlength="20" value="${c.address.zip}">
+            </label>
+            <label class="full">
+              <span>Zelle giving email</span>
+              <input type="email" name="zelleEmail" maxlength="120" value="${c.zelleEmail}">
+            </label>
+            <label class="full">
+              <span>Zoom link <em>(for online worship)</em></span>
+              <input type="url" name="zoom" maxlength="500" value="${c.zoom}">
+            </label>
+            <button class="btn btn-lg full" type="submit">
+              ${raw(icon("check").value)} Save changes
+            </button>
+          </form>
+        </div>
+      </div>
+    </section>
+  `;
+
+  return page({
+    title: "Contact Info Admin",
+    description: "Edit church contact details.",
+    path: "/admin/contact",
     body,
     bare: true,
   });

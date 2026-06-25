@@ -2111,6 +2111,69 @@ img, svg, iframe {
   width: fit-content;
 }
 
+/* ── Admin: contact editor ───────────────────────────────── */
+.contact-edit-form {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.1rem;
+  margin-top: 1.25rem;
+}
+.contact-edit-form label {
+  display: grid;
+  gap: 0.4rem;
+}
+.contact-edit-form label.full {
+  grid-column: 1 / -1;
+}
+.contact-edit-form label span {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--navy-800);
+}
+.contact-edit-form label em {
+  font-style: normal;
+  font-weight: 400;
+  color: var(--ink-soft);
+}
+.contact-edit-form input,
+.contact-edit-form textarea {
+  font-family: var(--sans);
+  font-size: 1rem;
+  color: var(--ink);
+  background: var(--ivory);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 0.75rem 0.9rem;
+  width: 100%;
+  resize: vertical;
+}
+.contact-edit-form input:focus,
+.contact-edit-form textarea:focus {
+  outline: none;
+  border-color: var(--gold-500);
+  box-shadow: 0 0 0 3px rgba(201, 161, 74, 0.18);
+}
+.contact-edit-form .btn.full {
+  width: fit-content;
+}
+.admin-saved {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0 0 0.5rem;
+  padding: 0.7rem 1rem;
+  border-radius: 10px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #1a7a4a;
+  background: rgba(26, 122, 74, 0.1);
+  border: 1px solid rgba(26, 122, 74, 0.25);
+}
+.admin-saved .icon {
+  width: 1.05em;
+  height: 1.05em;
+}
+
 /* ── Admin: lesson list ──────────────────────────────────── */
 .admin-lesson-list {
   display: grid;
@@ -2170,7 +2233,13 @@ img, svg, iframe {
   }
 }
 @media (max-width: 900px) {
-  .welcome-grid, .contact-grid, .prayer-layout, .pastor-card, .give-grid, .upload-form {
+  .welcome-grid,
+  .contact-grid,
+  .prayer-layout,
+  .pastor-card,
+  .give-grid,
+  .upload-form,
+  .contact-edit-form {
     grid-template-columns: 1fr;
   }
   .pastor-card {

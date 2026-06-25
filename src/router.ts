@@ -13,6 +13,7 @@ import { serveFile } from "@std/http/file-server";
 import * as pages from "./pages.ts";
 import { addPrayer, getStats, listPrayers, markAnswered, prayFor } from "./prayers.ts";
 import { addLesson, deleteLesson, getLesson, lessonPath, listLessons } from "./lessons.ts";
+import { contact, saveContact } from "./settings.ts";
 import {
   clearCookie,
   createSession,
@@ -73,6 +74,12 @@ export async function route(request: Request, url: URL): Promise<Response> {
   if (path === "/admin/lessons") {
     if (!(await isAuthed(request))) return redirect("/admin/login");
     return htmlResponse(pages.adminLessons({ lessons: await listLessons(), error: null }));
+  }
+  if (path === "/admin/contact") {
+    if (!(await isAuthed(request))) return redirect("/admin/login");
+    return htmlResponse(
+      pages.adminContact({ info: contact(), saved: url.searchParams.has("saved") }),
+    );
   }
 
   const builder = ROUTES[path];
@@ -175,6 +182,23 @@ async function handlePost(request: Request, url: URL, path: string): Promise<Res
     if (!(await isAuthed(request))) return redirect("/admin/login");
     await deleteLesson(String(form.get("id") ?? ""));
     return redirect("/admin/lessons");
+  }
+
+  if (path === "/admin/contact") {
+    if (!(await isAuthed(request))) return redirect("/admin/login");
+    await saveContact({
+      pastor: String(form.get("pastor") ?? ""),
+      email: String(form.get("email") ?? ""),
+      zelleEmail: String(form.get("zelleEmail") ?? ""),
+      phones: String(form.get("phones") ?? ""),
+      line1: String(form.get("line1") ?? ""),
+      detail: String(form.get("detail") ?? ""),
+      city: String(form.get("city") ?? ""),
+      state: String(form.get("state") ?? ""),
+      zip: String(form.get("zip") ?? ""),
+      zoom: String(form.get("zoom") ?? ""),
+    });
+    return redirect("/admin/contact?saved=1");
   }
 
   return htmlResponse(pages.notFound(), STATUS_CODE.NotFound);

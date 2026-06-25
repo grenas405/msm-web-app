@@ -118,6 +118,9 @@ The admin area has two tabs:
 - **Sunday School** (`/admin/lessons`) — upload a lesson PDF with a title and date, and delete old
   ones. PDFs are stored on disk under `MSM_DATA_DIR` (default `./data`); metadata lives in KV.
   Uploads are validated as PDFs and capped at 25 MB. The public archive is at `/sunday-school`.
+- **Contact Info** (`/admin/contact`) — edit the email, phone numbers, address, Zoom link, and Zelle
+  giving email anytime. Changes go live immediately across the Contact page, footer, and Giving page
+  (defaults live in `content.ts`; overrides are stored in KV via `src/settings.ts`).
 
 How it works:
 
