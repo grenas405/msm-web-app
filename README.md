@@ -118,9 +118,23 @@ The admin area has three tabs:
 - **Sunday School** (`/admin/lessons`) — upload a lesson PDF with a title and date, and delete old
   ones. PDFs are stored on disk under `MSM_DATA_DIR` (default `./data`); metadata lives in KV.
   Uploads are validated as PDFs and capped at 25 MB. The public archive is at `/sunday-school`.
-- **Contact Info** (`/admin/contact`) — edit the email, phone numbers, address, Zoom link, and Zelle
-  giving email anytime. Changes go live immediately across the Contact page, footer, and Giving page
-  (defaults live in `content.ts`; overrides are stored in KV via `src/settings.ts`).
+- **Contact Info** (`/admin/contact`) — edit the email, phone numbers, address, Zoom link, Zelle
+  giving email, and **PayPal giving link** anytime. Changes go live immediately across the Contact
+  page, footer, and Giving page (defaults live in `content.ts`; overrides in KV via
+  `src/settings.ts`). The PayPal "Give" button on `/giving` appears once a link is set.
+
+### Importing the old Sunday School archive
+
+To migrate the lessons from the previous Weebly site into the new Sunday School page, run this once
+(with the server stopped, so it can write to KV):
+
+```sh
+deno task import-lessons --dry   # preview the date → file mapping
+deno task import-lessons         # download + import all ~203 lessons
+```
+
+It's safe to re-run — already-imported lessons are skipped. On the VPS, prefix with the same
+`MSM_KV_PATH` / `MSM_DATA_DIR` the service uses.
 
 How it works:
 

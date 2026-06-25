@@ -302,9 +302,16 @@ export function services(): string {
         <article class="way-card">
           <span class="pillar-icon">${raw(icon("phone").value)}</span>
           <h3>By Phone</h3>
-          <p>Prefer to call in? Reach us for dial-in details.</p>
-          <a class="btn btn-sm" href="${contactInfo().phones[0].href}">${contactInfo().phones[0]
-            .display}</a>
+          <p>Prefer to call in? Reach us at any of our numbers.</p>
+          <div class="way-phones">
+            ${raw(
+              contactInfo().phones.map((ph) =>
+                html`
+                  <a class="way-phone" href="${ph.href}">${ph.display}</a>
+                `
+              ).join(""),
+            )}
+          </div>
         </article>
       </div>
     </section>
@@ -408,7 +415,7 @@ export function contact(): string {
         >
         <div class="pastor-words">
           <p class="eyebrow">Your Pastor &amp; First Lady</p>
-          <h2>${contactInfo().pastor} &amp; Folake</h2>
+          <h2>James and Folake Olufowote</h2>
           <p>
             It would be our joy to welcome you to Mercy Seat Ministries. Whether you have a question, a
             prayer need, or simply want to visit, please don't hesitate to reach out — our door and
@@ -520,19 +527,33 @@ export function giving(): string {
           <p class="muted">Our Zelle account is registered to this email.</p>
         </article>
 
-        <article class="give-card">
-          <span class="pillar-icon">${raw(icon("heart").value)}</span>
-          <h2>More ways to give</h2>
+        <article class="give-card give-card-feature">
+          <span class="give-badge give-badge-paypal">PayPal</span>
+          <h2>Give with PayPal</h2>
           <p>
-            You're always welcome to give in person during any of our weekly services, or by mailing a
-            check to the church.
+            Give securely with your debit card, credit card, or PayPal balance — no account required
+            to use a card.
           </p>
-          <p>
-            Card and debit giving is coming soon. In the meantime, if you'd like help giving, please <a
-              href="/contact"
-            >reach out to us</a> — we're glad to assist.
-          </p>
+          ${raw(
+            contactInfo().paypalUrl
+              ? html`
+                <a class="btn btn-lg give-paypal" href="${contactInfo()
+                  .paypalUrl}" target="_blank" rel="noopener">
+                  ${raw(icon("heart").value)} Give with PayPal
+                </a>
+              `
+              : html`
+                <p class="muted">Our PayPal giving link will be available here shortly.</p>
+              `,
+          )}
         </article>
+      </div>
+
+      <div class="container give-more">
+        <p>
+          You're also welcome to give in person at any service, or by mailing a check to the church.
+          Questions? <a href="/contact">Reach out</a> — we're glad to help.
+        </p>
       </div>
     </section>
 
@@ -1360,6 +1381,17 @@ export function adminContact(view: AdminContactView): string {
             <label class="full">
               <span>Zelle giving email</span>
               <input type="email" name="zelleEmail" maxlength="120" value="${c.zelleEmail}">
+            </label>
+            <label class="full">
+              <span>PayPal giving link <em>(PayPal.Me or donate-button URL — shown on the Giving
+                  page)</em></span>
+              <input
+                type="url"
+                name="paypalUrl"
+                maxlength="500"
+                value="${c.paypalUrl}"
+                placeholder="https://paypal.me/yourchurch"
+              >
             </label>
             <label class="full">
               <span>Zoom link <em>(for online worship)</em></span>

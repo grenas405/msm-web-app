@@ -17,6 +17,7 @@ export interface ContactInfo {
   pastor: string;
   email: string;
   zelleEmail: string;
+  paypalUrl: string; // hosted PayPal giving link (PayPal.Me or donate button); "" hides it
   phones: Phone[];
   address: { line1: string; detail: string; city: string; state: string; zip: string };
   zoom: string;
@@ -29,6 +30,7 @@ const DEFAULTS: ContactInfo = {
   pastor: CONTACT.pastor,
   email: CONTACT.email,
   zelleEmail: GIVING.zelleEmail,
+  paypalUrl: GIVING.paypalUrl,
   phones: CONTACT.phones.map((p) => ({ display: p.display, href: p.href })),
   address: { ...CONTACT.address },
   zoom: CONTACT.zoom,
@@ -59,6 +61,7 @@ export interface ContactInput {
   pastor: string;
   email: string;
   zelleEmail: string;
+  paypalUrl: string;
   phones: string; // one number per line
   line1: string;
   detail: string;
@@ -75,6 +78,7 @@ export async function saveContact(input: ContactInput): Promise<void> {
     pastor: clean(input.pastor, 80) || DEFAULTS.pastor,
     email: clean(input.email, 120),
     zelleEmail: clean(input.zelleEmail, 120),
+    paypalUrl: clean(input.paypalUrl, 500),
     phones: phones.length > 0 ? phones : DEFAULTS.phones,
     address: {
       line1: clean(input.line1, 120),

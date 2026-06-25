@@ -33,9 +33,10 @@ export const CONTACT = {
   zoom: "https://zoom.us/j/92145127989?pwd=ZVYxYlFKRjZpWFRqa1ZhQ24vTUJHQT09",
 } as const;
 
-// Online giving. Card/debit giving can be added later via a hosted link.
+// Online giving. The PayPal link is set by the pastor in the admin panel.
 export const GIVING = {
   zelleEmail: "msmokc@outlook.com",
+  paypalUrl: "",
 } as const;
 
 export interface ServiceTime {

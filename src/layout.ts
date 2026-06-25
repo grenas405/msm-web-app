@@ -127,7 +127,13 @@ function siteFooter(): string {
         <div class="footer-col">
           <h3>Connect</h3>
           <p>
-            <a href="${contact().phones[0].href}">${contact().phones[0].display}</a><br>
+            ${raw(
+              contact().phones.map((ph) =>
+                html`
+                  <a href="${ph.href}">${ph.display}</a>
+                `
+              ).join("<br>"),
+            )}<br>
             <a href="mailto:${contact().email}">${contact().email}</a>
           </p>
         </div>

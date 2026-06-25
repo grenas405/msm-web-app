@@ -423,6 +423,9 @@ img, svg, iframe {
 
 .hero .eyebrow {
   color: var(--gold-400);
+  font-size: clamp(0.95rem, 1.6vw, 1.2rem);
+  letter-spacing: 0.16em;
+  margin-bottom: 1.25rem;
 }
 .eyebrow-rule {
   display: inline-flex;
@@ -797,6 +800,20 @@ img, svg, iframe {
 }
 .way-card .btn {
   margin-top: 0.5rem;
+}
+.way-phones {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  margin-top: 0.5rem;
+}
+.way-phone {
+  font-weight: 700;
+  font-size: 1.05rem;
+  color: var(--navy-800);
+}
+.way-phone:hover {
+  color: var(--gold-600);
 }
 
 /* ── Leader card ─────────────────────────────────────────── */
@@ -1915,6 +1932,18 @@ img, svg, iframe {
   border-radius: 999px;
   padding: 0.3rem 0.85rem;
   margin-bottom: 1rem;
+}
+.give-badge-paypal {
+  color: #fff;
+  background: #0070ba;
+}
+.give-paypal {
+  margin-top: 0.5rem;
+}
+.give-more {
+  margin-top: 1.75rem;
+  text-align: center;
+  color: var(--ink-soft);
 }
 .give-steps {
   margin: 0 0 1.5rem;

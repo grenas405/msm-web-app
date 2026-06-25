@@ -2,6 +2,26 @@
 
 All notable changes to the Mercy Seat Ministries web app are documented here.
 
+## [1.9.0] — 2026-06-25
+
+Second round of pastor-requested changes.
+
+### Added
+
+- **PayPal giving** alongside Zelle on the `/giving` page. The PayPal link is set by the pastor in
+  the **Contact Info** admin tab (`paypalUrl`); the button appears once it's set.
+- **Sunday School lesson migration.** `deno task import-lessons` pulls the full archive (~203 weekly
+  lessons, Aug 2022 – Jun 2026) from the old Weebly site into the new Sunday School page. Idempotent
+  (skips already-imported files); supports `--dry` and a numeric limit for testing. Dates are
+  derived from the weekly cadence with an alignment guard.
+
+### Changed
+
+- **Bigger "Welcome to Mercy Seat Ministries"** eyebrow on the home hero.
+- **All three phone numbers** now appear in the site footer (every page) and the Services "By Phone"
+  card — not just the primary number.
+- **Contact photo caption** now reads "James and Folake Olufowote".
+
 ## [1.8.0] — 2026-06-24
 
 ### Added

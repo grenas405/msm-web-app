@@ -190,6 +190,7 @@ async function handlePost(request: Request, url: URL, path: string): Promise<Res
       pastor: String(form.get("pastor") ?? ""),
       email: String(form.get("email") ?? ""),
       zelleEmail: String(form.get("zelleEmail") ?? ""),
+      paypalUrl: String(form.get("paypalUrl") ?? ""),
       phones: String(form.get("phones") ?? ""),
       line1: String(form.get("line1") ?? ""),
       detail: String(form.get("detail") ?? ""),
