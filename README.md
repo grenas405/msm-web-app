@@ -78,9 +78,14 @@ static/
 | `/services`      | Service times + ways to attend (in person/Zoom/phone)      |
 | `/ministries`    | The ministries of the church (incl. Fellowship, Acts 2:46) |
 | `/sunday-school` | Download this week's lesson + browse the PDF archive       |
+| `/devotionals`   | Links to Our Daily Bread, My Utmost, YouVersion Bible App  |
 | `/prayer-wall`   | Interactive prayer requests, "I prayed" counts, answered   |
-| `/giving`        | Online giving via Zelle (card giving can be added later)   |
+| `/social`        | Facebook & Instagram (links set in admin)                  |
+| `/giving`        | Online giving via Zelle + PayPal                           |
 | `/contact`       | Pastors' photo, phones, email, Zoom, and an embedded map   |
+
+Sunday School, Daily Devotionals, Prayer Wall, and Social Media are grouped under a **"Resources"**
+dropdown in the top navigation.
 
 ## Prayer Wall
 
@@ -119,9 +124,10 @@ The admin area has three tabs:
   ones. PDFs are stored on disk under `MSM_DATA_DIR` (default `./data`); metadata lives in KV.
   Uploads are validated as PDFs and capped at 25 MB. The public archive is at `/sunday-school`.
 - **Contact Info** (`/admin/contact`) — edit the email, phone numbers, address, Zoom link, Zelle
-  giving email, and **PayPal giving link** anytime. Changes go live immediately across the Contact
-  page, footer, and Giving page (defaults live in `content.ts`; overrides in KV via
-  `src/settings.ts`). The PayPal "Give" button on `/giving` appears once a link is set.
+  giving email, **PayPal link**, and **Facebook/Instagram links** anytime. Changes go live
+  immediately across the Contact page, footer, Giving page, and Social Media page (defaults live in
+  `content.ts`; overrides in KV via `src/settings.ts`). The PayPal button, the social cards, and the
+  footer social icons all appear once their links are set.
 
 ### Importing the old Sunday School archive
 

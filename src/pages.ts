@@ -6,6 +6,7 @@ import { page } from "./layout.ts";
 import { icon } from "./icons.ts";
 import {
   BENEDICTION,
+  DEVOTIONALS,
   FELLOWSHIP_VERSE,
   PILLARS,
   PRAYER_CATEGORIES,
@@ -645,6 +646,120 @@ export function sundaySchool(lessons: Lesson[]): string {
     description:
       "Download Sunday School lessons from Mercy Seat Ministries OKC and browse the archive of past lessons.",
     path: "/sunday-school",
+    body,
+  });
+}
+
+// ── Daily Devotionals ─────────────────────────────────────────────────────
+
+export function devotionals(): string {
+  const cards = DEVOTIONALS.map((d) =>
+    html`
+      <a class="devo-card" href="${d.url}" target="_blank" rel="noopener">
+        <span class="pillar-icon">${raw(icon(d.icon).value)}</span>
+        <h2>${d.name}</h2>
+        <p>${d.blurb}</p>
+        <span class="link-arrow">Open ${raw(icon("arrow").value)}</span>
+      </a>
+    `
+  ).join("");
+
+  const body = html`
+    <section class="page-hero">
+      <div class="container">
+        <p class="eyebrow">Daily Devotionals</p>
+        <h1>A few minutes in the Word, every day.</h1>
+        <p class="page-hero-lead">
+          Trusted devotionals and tools to help you walk daily with Jesus. These open in a new tab.
+        </p>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container">
+        <div class="devo-grid">${raw(cards)}</div>
+      </div>
+    </section>
+
+    ${raw(scriptureBanner({
+      text: "Your word is a lamp for my feet, a light on my path.",
+      reference: "Psalm 119:105",
+    }))}
+  `;
+
+  return page({
+    title: "Daily Devotionals",
+    description:
+      "Daily devotional resources recommended by Mercy Seat Ministries OKC — Our Daily Bread, My Utmost for His Highest, and the YouVersion Bible App.",
+    path: "/devotionals",
+    body,
+  });
+}
+
+// ── Social Media ──────────────────────────────────────────────────────────
+
+export function social(): string {
+  const fb = contactInfo().facebookUrl;
+  const ig = contactInfo().instagramUrl;
+
+  const card = (name: string, ic: string, url: string, blurb: string, mod: string) =>
+    url
+      ? html`
+        <a class="social-card ${mod}" href="${url}" target="_blank" rel="noopener">
+          <span class="social-card-icon">${raw(icon(ic).value)}</span>
+          <h2>${name}</h2>
+          <p>${blurb}</p>
+          <span class="link-arrow">Follow us ${raw(icon("arrow").value)}</span>
+        </a>
+      `
+      : html`
+        <div class="social-card ${mod} social-soon">
+          <span class="social-card-icon">${raw(icon(ic).value)}</span>
+          <h2>${name}</h2>
+          <p>${blurb}</p>
+          <span class="social-coming">Coming soon</span>
+        </div>
+      `;
+
+  const body = html`
+    <section class="page-hero">
+      <div class="container">
+        <p class="eyebrow">Social Media</p>
+        <h1>Stay connected with us.</h1>
+        <p class="page-hero-lead">
+          Follow Mercy Seat Ministries for encouragement, updates, and a glimpse of life in our church
+          family.
+        </p>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container social-grid">
+        ${raw(
+          card(
+            "Facebook",
+            "facebook",
+            fb,
+            "Service updates, photos, and announcements.",
+            "social-fb",
+          ),
+        )} ${raw(
+          card(
+            "Instagram",
+            "instagram",
+            ig,
+            "Moments and encouragement from our church family.",
+            "social-ig",
+          ),
+        )}
+      </div>
+    </section>
+  `;
+
+  return page({
+    title: "Social Media",
+    description: "Follow Mercy Seat Ministries OKC on Facebook and Instagram.",
+    path: "/social",
     body,
   });
 }
@@ -1391,6 +1506,26 @@ export function adminContact(view: AdminContactView): string {
                 maxlength="500"
                 value="${c.paypalUrl}"
                 placeholder="https://paypal.me/yourchurch"
+              >
+            </label>
+            <label>
+              <span>Facebook page link</span>
+              <input
+                type="url"
+                name="facebookUrl"
+                maxlength="500"
+                value="${c.facebookUrl}"
+                placeholder="https://facebook.com/yourchurch"
+              >
+            </label>
+            <label>
+              <span>Instagram link</span>
+              <input
+                type="url"
+                name="instagramUrl"
+                maxlength="500"
+                value="${c.instagramUrl}"
+                placeholder="https://instagram.com/yourchurch"
               >
             </label>
             <label class="full">

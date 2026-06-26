@@ -38,6 +38,8 @@ const ROUTES: Record<string, PageBuilder> = {
   "/services": pages.services,
   "/ministries": pages.ministries,
   "/giving": pages.giving,
+  "/devotionals": pages.devotionals,
+  "/social": pages.social,
   "/contact": pages.contact,
 };
 
@@ -191,6 +193,8 @@ async function handlePost(request: Request, url: URL, path: string): Promise<Res
       email: String(form.get("email") ?? ""),
       zelleEmail: String(form.get("zelleEmail") ?? ""),
       paypalUrl: String(form.get("paypalUrl") ?? ""),
+      facebookUrl: String(form.get("facebookUrl") ?? ""),
+      instagramUrl: String(form.get("instagramUrl") ?? ""),
       phones: String(form.get("phones") ?? ""),
       line1: String(form.get("line1") ?? ""),
       detail: String(form.get("detail") ?? ""),

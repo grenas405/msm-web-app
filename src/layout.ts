@@ -2,7 +2,7 @@
 // One function, `page()`, wraps any body content in the full document.
 
 import { html, raw } from "./html.ts";
-import { NAV, SITE } from "./content.ts";
+import { NAV, type NavItem, SITE } from "./content.ts";
 import { contact } from "./settings.ts";
 import { icon } from "./icons.ts";
 
@@ -15,15 +15,58 @@ export interface PageOptions {
   bare?: boolean;
 }
 
-/** Build the navigation links, marking the current page. */
+/** A single nav anchor, marked active on the current page. */
+function navLink(item: NavItem, currentPath: string): string {
+  const cls = item.href === currentPath ? "active" : "";
+  return html`
+    <a class="${cls}" href="${item.href}">${item.label}</a>
+  `;
+}
+
+/** Build the navigation, rendering a dropdown for any item with children. */
 function nav(currentPath: string): string {
-  const links = NAV.map((item) => {
-    const cls = item.href === currentPath ? "active" : "";
+  return NAV.map((item) => {
+    if (!item.children) return navLink(item, currentPath);
+    const active = item.children.some((c) => c.href === currentPath) ? " active" : "";
+    const sub = item.children.map((c) => navLink(c, currentPath)).join("");
     return html`
-      <a class="${cls}" href="${item.href}">${item.label}</a>
+      <div class="nav-group">
+        <button class="nav-group-toggle${active}" type="button" aria-haspopup="true">
+          ${item.label} ${raw(icon("chevron").value)}
+        </button>
+        <div class="nav-submenu">${raw(sub)}</div>
+      </div>
     `;
-  });
-  return links.join("");
+  }).join("");
+}
+
+/** Flatten the nav into its leaf links (for the footer). */
+function navLeaves(): NavItem[] {
+  return NAV.flatMap((i) => i.children ?? [i]);
+}
+
+/** Facebook/Instagram icon links — only the ones that have a URL set. */
+function socialIcons(className: string): string {
+  const c = contact();
+  const links: string[] = [];
+  if (c.facebookUrl) {
+    links.push(html`
+      <a href="${c.facebookUrl}" target="_blank" rel="noopener" aria-label="Facebook">${raw(
+        icon("facebook").value,
+      )}</a>
+    `);
+  }
+  if (c.instagramUrl) {
+    links.push(html`
+      <a href="${c.instagramUrl}" target="_blank" rel="noopener" aria-label="Instagram">${raw(
+        icon("instagram").value,
+      )}</a>
+    `);
+  }
+  if (links.length === 0) return "";
+  return html`
+    <div class="${className}">${raw(links.join(""))}</div>
+  `;
 }
 
 /** Render a complete HTML document. */
@@ -115,6 +158,7 @@ function siteFooter(): string {
           <div>
             <p class="footer-name">${SITE.name}</p>
             <p class="footer-mission">${SITE.mission}</p>
+            ${raw(socialIcons("footer-social"))}
           </div>
         </div>
         <div class="footer-col">
@@ -141,7 +185,7 @@ function siteFooter(): string {
           <h3>Gather</h3>
           <nav class="footer-links" aria-label="Footer">
             ${raw(
-              NAV.map((i) =>
+              navLeaves().map((i) =>
                 html`
                   <a href="${i.href}">${i.label}</a>
                 `

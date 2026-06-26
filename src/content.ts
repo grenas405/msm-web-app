@@ -124,7 +124,8 @@ export const PILLARS: Pillar[] = [
 
 export interface NavItem {
   label: string;
-  href: string;
+  href?: string; // omitted for a dropdown parent
+  children?: NavItem[];
 }
 
 export const NAV: NavItem[] = [
@@ -132,9 +133,16 @@ export const NAV: NavItem[] = [
   { label: "About", href: "/about" },
   { label: "Services", href: "/services" },
   { label: "Ministries", href: "/ministries" },
-  { label: "Sunday School", href: "/sunday-school" },
-  { label: "Prayer Wall", href: "/prayer-wall" },
   { label: "Giving", href: "/giving" },
+  {
+    label: "Resources",
+    children: [
+      { label: "Sunday School", href: "/sunday-school" },
+      { label: "Daily Devotionals", href: "/devotionals" },
+      { label: "Prayer Wall", href: "/prayer-wall" },
+      { label: "Social Media", href: "/social" },
+    ],
+  },
   { label: "Contact", href: "/contact" },
 ];
 
@@ -186,6 +194,44 @@ export const FELLOWSHIP_VERSE: Verse = {
     "So continuing daily with one accord in the temple, and breaking bread from house to house, they ate their food with gladness and simplicity of heart.",
   reference: "Acts 2:46",
 };
+
+// Outside devotional resources linked from the Daily Devotionals page.
+export interface DevotionalLink {
+  name: string;
+  blurb: string;
+  url: string;
+  icon: string;
+}
+
+export const DEVOTIONALS: DevotionalLink[] = [
+  {
+    name: "Our Daily Bread",
+    blurb:
+      "A short daily reading with a Bible passage and prayer — a simple way to start each day in the Word.",
+    url: "https://www.odbm.org/en",
+    icon: "book",
+  },
+  {
+    name: "My Utmost for His Highest",
+    blurb:
+      "Oswald Chambers' beloved daily devotional, calling believers to wholehearted surrender to Jesus.",
+    url: "https://utmost.org",
+    icon: "flame",
+  },
+  {
+    name: "YouVersion Bible App",
+    blurb:
+      "Read the Bible, follow guided reading plans, and get a verse of the day on your phone — free.",
+    url: "https://www.youversion.com/bible-app",
+    icon: "phone",
+  },
+];
+
+// Social media. The pastor sets these links in the admin panel; "" hides them.
+export const SOCIAL = {
+  facebookUrl: "",
+  instagramUrl: "",
+} as const;
 
 // The fixed set of categories offered on the Prayer Wall request form.
 export const PRAYER_CATEGORIES = [

@@ -6,7 +6,7 @@
 // they're loaded at startup or saved from the admin form.
 
 import { kv } from "./kv.ts";
-import { CONTACT, GIVING } from "./content.ts";
+import { CONTACT, GIVING, SOCIAL } from "./content.ts";
 
 export interface Phone {
   display: string;
@@ -18,6 +18,8 @@ export interface ContactInfo {
   email: string;
   zelleEmail: string;
   paypalUrl: string; // hosted PayPal giving link (PayPal.Me or donate button); "" hides it
+  facebookUrl: string; // "" hides the Facebook link
+  instagramUrl: string; // "" hides the Instagram link
   phones: Phone[];
   address: { line1: string; detail: string; city: string; state: string; zip: string };
   zoom: string;
@@ -31,6 +33,8 @@ const DEFAULTS: ContactInfo = {
   email: CONTACT.email,
   zelleEmail: GIVING.zelleEmail,
   paypalUrl: GIVING.paypalUrl,
+  facebookUrl: SOCIAL.facebookUrl,
+  instagramUrl: SOCIAL.instagramUrl,
   phones: CONTACT.phones.map((p) => ({ display: p.display, href: p.href })),
   address: { ...CONTACT.address },
   zoom: CONTACT.zoom,
@@ -62,6 +66,8 @@ export interface ContactInput {
   email: string;
   zelleEmail: string;
   paypalUrl: string;
+  facebookUrl: string;
+  instagramUrl: string;
   phones: string; // one number per line
   line1: string;
   detail: string;
@@ -79,6 +85,8 @@ export async function saveContact(input: ContactInput): Promise<void> {
     email: clean(input.email, 120),
     zelleEmail: clean(input.zelleEmail, 120),
     paypalUrl: clean(input.paypalUrl, 500),
+    facebookUrl: clean(input.facebookUrl, 500),
+    instagramUrl: clean(input.instagramUrl, 500),
     phones: phones.length > 0 ? phones : DEFAULTS.phones,
     address: {
       line1: clean(input.line1, 120),

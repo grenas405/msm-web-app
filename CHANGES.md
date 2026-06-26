@@ -2,6 +2,20 @@
 
 All notable changes to the Mercy Seat Ministries web app are documented here.
 
+## [1.10.0] — 2026-06-26
+
+### Added
+
+- **Daily Devotionals page** (`/devotionals`) — curated links to Our Daily Bread, My Utmost for His
+  Highest, and the YouVersion Bible App, each opening in a new tab.
+- **Social Media page** (`/social`) — Facebook and Instagram cards that show "Coming soon" until the
+  pastor adds the links. The Facebook/Instagram URLs are new fields in the **Contact Info** admin
+  tab; once set, the cards become live links and **Facebook/Instagram icons appear in the site
+  footer**.
+- **"Resources" dropdown** in the main navigation, grouping Sunday School, Daily Devotionals, Prayer
+  Wall, and Social Media so the top bar stays clean (CSS-only; shown inline in the mobile menu).
+  `NavItem` now supports `children`.
+
 ## [1.9.0] — 2026-06-25
 
 Second round of pastor-requested changes.
