@@ -529,6 +529,27 @@ export function giving(): string {
         </article>
 
         <article class="give-card give-card-feature">
+          <span class="give-badge give-badge-givelify">Givelify</span>
+          <h2>Give with Givelify</h2>
+          <p>
+            Give by debit or credit card in seconds — make a one-time gift or set up recurring
+            giving, with year-end tax receipts.
+          </p>
+          ${raw(
+    contactInfo().givelifyUrl
+      ? html`
+                <a class="btn btn-lg give-givelify" href="${contactInfo()
+        .givelifyUrl}" target="_blank" rel="noopener">
+                  ${raw(icon("heart").value)} Give with Givelify
+                </a>
+              `
+      : html`
+                <p class="muted">Our Givelify giving link will be available here shortly.</p>
+              `,
+  )}
+        </article>
+
+        <article class="give-card give-card-feature">
           <span class="give-badge give-badge-paypal">PayPal</span>
           <h2>Give with PayPal</h2>
           <p>
@@ -1507,6 +1528,11 @@ export function adminContact(view: AdminContactView): string {
                 value="${c.paypalUrl}"
                 placeholder="https://paypal.me/yourchurch"
               >
+            </label>
+            <label class="full">
+              <span>Givelify giving link <em>(your Givelify giving page URL — shown on the Giving page)</em></span>
+              <input type="url" name="givelifyUrl" maxlength="500" value="${c.givelifyUrl}"
+                placeholder="https://giv.li/your-church">
             </label>
             <label>
               <span>Facebook page link</span>

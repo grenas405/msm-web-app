@@ -2,6 +2,22 @@
 
 All notable changes to the Mercy Seat Ministries web app are documented here.
 
+## [1.11.0] — 2026-06-27
+
+### Changed
+
+- **Flattened the navigation** — removed the "Resources" dropdown; Sunday School, Daily Devotionals,
+  Prayer Wall, and Social Media are now their own top-level menu items.
+- **Bigger, friendlier mobile menu** — larger tap targets and type in the hamburger menu; it now
+  engages a bit wider (≤1300px) so the full menu is never cramped. Removed the redundant desktop
+  "Plan a Visit" button (Contact is in the nav; it remains in the mobile menu) and widened the
+  header so all items fit on desktop.
+
+### Added
+
+- **Givelify giving** on the `/giving` page, alongside Zelle and PayPal. The Givelify link is a new
+  field in the **Contact Info** admin tab; the "Give with Givelify" button appears once it's set.
+
 ## [1.10.0] — 2026-06-26
 
 ### Added

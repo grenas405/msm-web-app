@@ -33,10 +33,11 @@ export const CONTACT = {
   zoom: "https://zoom.us/j/92145127989?pwd=ZVYxYlFKRjZpWFRqa1ZhQ24vTUJHQT09",
 } as const;
 
-// Online giving. The PayPal link is set by the pastor in the admin panel.
+// Online giving. The PayPal/Givelify links are set by the pastor in the admin panel.
 export const GIVING = {
   zelleEmail: "msmokc@outlook.com",
   paypalUrl: "",
+  givelifyUrl: "",
 } as const;
 
 export interface ServiceTime {
@@ -133,16 +134,11 @@ export const NAV: NavItem[] = [
   { label: "About", href: "/about" },
   { label: "Services", href: "/services" },
   { label: "Ministries", href: "/ministries" },
+  { label: "Sunday School", href: "/sunday-school" },
+  { label: "Daily Devotionals", href: "/devotionals" },
+  { label: "Prayer Wall", href: "/prayer-wall" },
+  { label: "Social Media", href: "/social" },
   { label: "Giving", href: "/giving" },
-  {
-    label: "Resources",
-    children: [
-      { label: "Sunday School", href: "/sunday-school" },
-      { label: "Daily Devotionals", href: "/devotionals" },
-      { label: "Prayer Wall", href: "/prayer-wall" },
-      { label: "Social Media", href: "/social" },
-    ],
-  },
   { label: "Contact", href: "/contact" },
 ];
 

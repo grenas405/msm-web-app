@@ -18,6 +18,7 @@ export interface ContactInfo {
   email: string;
   zelleEmail: string;
   paypalUrl: string; // hosted PayPal giving link (PayPal.Me or donate button); "" hides it
+  givelifyUrl: string; // Givelify giving link; "" hides it
   facebookUrl: string; // "" hides the Facebook link
   instagramUrl: string; // "" hides the Instagram link
   phones: Phone[];
@@ -33,6 +34,7 @@ const DEFAULTS: ContactInfo = {
   email: CONTACT.email,
   zelleEmail: GIVING.zelleEmail,
   paypalUrl: GIVING.paypalUrl,
+  givelifyUrl: GIVING.givelifyUrl,
   facebookUrl: SOCIAL.facebookUrl,
   instagramUrl: SOCIAL.instagramUrl,
   phones: CONTACT.phones.map((p) => ({ display: p.display, href: p.href })),
@@ -66,6 +68,7 @@ export interface ContactInput {
   email: string;
   zelleEmail: string;
   paypalUrl: string;
+  givelifyUrl: string;
   facebookUrl: string;
   instagramUrl: string;
   phones: string; // one number per line
@@ -85,6 +88,7 @@ export async function saveContact(input: ContactInput): Promise<void> {
     email: clean(input.email, 120),
     zelleEmail: clean(input.zelleEmail, 120),
     paypalUrl: clean(input.paypalUrl, 500),
+    givelifyUrl: clean(input.givelifyUrl, 500),
     facebookUrl: clean(input.facebookUrl, 500),
     instagramUrl: clean(input.instagramUrl, 500),
     phones: phones.length > 0 ? phones : DEFAULTS.phones,

@@ -193,6 +193,7 @@ async function handlePost(request: Request, url: URL, path: string): Promise<Res
       email: String(form.get("email") ?? ""),
       zelleEmail: String(form.get("zelleEmail") ?? ""),
       paypalUrl: String(form.get("paypalUrl") ?? ""),
+      givelifyUrl: String(form.get("givelifyUrl") ?? ""),
       facebookUrl: String(form.get("facebookUrl") ?? ""),
       instagramUrl: String(form.get("instagramUrl") ?? ""),
       phones: String(form.get("phones") ?? ""),

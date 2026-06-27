@@ -135,7 +135,6 @@ function siteHeader(path: string): string {
         <nav class="site-nav" aria-label="Primary">
           ${raw(nav(path))}
         </nav>
-        <a class="btn btn-sm header-cta" href="/contact">Plan a Visit</a>
         <button class="nav-toggle" data-nav-toggle aria-label="Toggle menu" aria-expanded="false">
           <span></span><span></span><span></span>
         </button>
