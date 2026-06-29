@@ -415,7 +415,6 @@ export function contact(): string {
           loading="lazy"
         >
         <div class="pastor-words">
-          <p class="eyebrow">Your Pastor &amp; First Lady</p>
           <h2>James and Folake Olufowote</h2>
           <p>
             It would be our joy to welcome you to Mercy Seat Ministries. Whether you have a question, a

@@ -196,7 +196,10 @@ function siteFooter(): string {
       <div class="container footer-bottom">
         <p>&copy; ${new Date().getFullYear()} ${SITE.name} — ${SITE
           .tagline}. All rights reserved.</p>
-        <p>${SITE.mission}</p>
+        <p class="footer-credit">
+          Designed &amp; built by
+          <a href="https://pedromdominguez.com" target="_blank" rel="noopener">Pedro M. Dominguez</a>
+        </p>
       </div>
     </footer>
   `;
