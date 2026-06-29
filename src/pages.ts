@@ -122,6 +122,9 @@ export function home(): string {
             icon("arrow").value,
           )}</a>
           <a class="btn btn-outline-light btn-lg" href="/about">Who We Are</a>
+          <a class="btn btn-outline-light btn-lg" href="/giving">${raw(
+            icon("heart").value,
+          )} Give</a>
         </div>
         <ul class="hero-facts">
           <li>${raw(icon("clock").value)}<span>Sundays at 10:15 AM</span></li>
@@ -415,6 +418,7 @@ export function contact(): string {
           loading="lazy"
         >
         <div class="pastor-words">
+          <p class="eyebrow">Your Pastor &amp; First Lady</p>
           <h2>James and Folake Olufowote</h2>
           <p>
             It would be our joy to welcome you to Mercy Seat Ministries. Whether you have a question, a
