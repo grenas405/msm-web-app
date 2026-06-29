@@ -77,7 +77,8 @@ export const SERVICES: ServiceTime[] = [
 export interface Pillar {
   title: string;
   body: string;
-  icon: string;
+  image: string;
+  imageAlt: string;
 }
 
 export const PILLARS: Pillar[] = [
@@ -85,41 +86,48 @@ export const PILLARS: Pillar[] = [
     title: "The Word of God",
     body:
       "Deep engagement with Scripture to know God the Father, Jesus the Son, and the Holy Spirit.",
-    icon: "book",
+    image: "/static/images/pillars/word-of-god.webp",
+    imageAlt: "An open Bible illuminated by warm golden light",
   },
   {
     title: "The Holy Spirit",
     body:
       "Walking in the gifts and the fruit of the Spirit as a living, active community of believers.",
-    icon: "flame",
+    image: "/static/images/pillars/holy-spirit.webp",
+    imageAlt: "A white dove in flight through warm golden light",
   },
   {
     title: "Scriptural Prayer",
     body:
       "Intentional, Bible-based prayer that anchors every gathering and decision in God's promises.",
-    icon: "hands",
+    image: "/static/images/pillars/scriptural-prayer.webp",
+    imageAlt: "Hands clasped in prayer above an open Bible",
   },
   {
     title: "Praise & Worship",
     body: "Consistent, heartfelt praise that lifts the name of Jesus and welcomes His presence.",
-    icon: "music",
+    image: "/static/images/pillars/praise-worship.webp",
+    imageAlt: "Hands raised in worship toward warm golden light",
   },
   {
     title: "Compassion & Evangelism",
     body:
       "Reaching our city and the world through compassionate service and the good news of Christ.",
-    icon: "heart",
+    image: "/static/images/pillars/compassion-evangelism.webp",
+    imageAlt: "Two hands reaching toward one another in care",
   },
   {
     title: "The Next Generation",
     body: "Investing in children and young adults as they grow in faith, character, and calling.",
-    icon: "sprout",
+    image: "/static/images/pillars/next-generation.webp",
+    imageAlt: "A hand nurturing a young green plant",
   },
   {
     title: "Fellowship",
     body:
       "Sharing life together — breaking bread from house to house with glad and sincere hearts, as the early church did.",
-    icon: "users",
+    image: "/static/images/pillars/fellowship.webp",
+    imageAlt: "A diverse group of hands breaking bread together",
   },
 ];
 

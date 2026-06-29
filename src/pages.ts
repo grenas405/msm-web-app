@@ -90,9 +90,19 @@ export function home(): string {
   const pillars = PILLARS.slice(0, 3).map((p) =>
     html`
       <article class="pillar">
-        <span class="pillar-icon">${raw(icon(p.icon).value)}</span>
-        <h3>${p.title}</h3>
-        <p>${p.body}</p>
+        <img
+          class="pillar-image"
+          src="${p.image}"
+          width="960"
+          height="600"
+          alt="${p.imageAlt}"
+          loading="lazy"
+          decoding="async"
+        >
+        <div class="pillar-copy">
+          <h3>${p.title}</h3>
+          <p>${p.body}</p>
+        </div>
       </article>
     `
   ).join("");
@@ -226,9 +236,19 @@ export function about(): string {
             PILLARS.map((p) =>
               html`
                 <article class="pillar pillar-lg">
-                  <span class="pillar-icon">${raw(icon(p.icon).value)}</span>
-                  <h3>${p.title}</h3>
-                  <p>${p.body}</p>
+                  <img
+                    class="pillar-image"
+                    src="${p.image}"
+                    width="960"
+                    height="600"
+                    alt="${p.imageAlt}"
+                    loading="lazy"
+                    decoding="async"
+                  >
+                  <div class="pillar-copy">
+                    <h3>${p.title}</h3>
+                    <p>${p.body}</p>
+                  </div>
                 </article>
               `
             ).join(""),
@@ -353,9 +373,19 @@ export function ministries(): string {
             PILLARS.map((p) =>
               html`
                 <article class="pillar pillar-lg">
-                  <span class="pillar-icon">${raw(icon(p.icon).value)}</span>
-                  <h3>${p.title}</h3>
-                  <p>${p.body}</p>
+                  <img
+                    class="pillar-image"
+                    src="${p.image}"
+                    width="960"
+                    height="600"
+                    alt="${p.imageAlt}"
+                    loading="lazy"
+                    decoding="async"
+                  >
+                  <div class="pillar-copy">
+                    <h3>${p.title}</h3>
+                    <p>${p.body}</p>
+                  </div>
                 </article>
               `
             ).join(""),
