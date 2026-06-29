@@ -23,7 +23,7 @@ PORT=3000 deno task start
 Bind to a specific interface with `HOST`:
 
 ```sh
-HOST=127.0.0.1 PORT=8004 deno task start
+HOST=127.0.0.1 PORT=8005 deno task start
 ```
 
 ## Design philosophy
@@ -193,7 +193,7 @@ deno fmt             # format
 
 A production unit is provided at `deploy/systemd/msm-web-app.service`. It assumes the checkout path
 is `/home/sysadmin/.local/src/development/msm-web-app`, runs as `sysadmin`, listens on
-`127.0.0.1:8004`, and stores Deno KV data in `/var/lib/msm-web-app/msm.db`.
+`127.0.0.1:8005`, and stores Deno KV data in `/var/lib/msm-web-app/msm.db`.
 
 ```sh
 sudo cp deploy/systemd/msm-web-app.service /etc/systemd/system/

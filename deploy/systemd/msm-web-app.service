@@ -25,7 +25,7 @@ WorkingDirectory=/home/sysadmin/.local/src/development/msm-web-app
 Environment=PATH=/home/sysadmin/.deno/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
 Environment=DENO_DIR=/var/cache/msm-web-app/deno
 Environment=HOST=127.0.0.1
-Environment=PORT=8004
+Environment=PORT=8005
 Environment=MSM_KV_PATH=/var/lib/msm-web-app/msm.db
 Environment=MSM_DATA_DIR=/var/lib/msm-web-app/data
 
