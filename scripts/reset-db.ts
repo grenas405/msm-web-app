@@ -1,6 +1,6 @@
 // reset-db.ts — Reset the Prayer Wall data in Deno KV.
 //
-//   deno task reset          # clear prayers + sessions; re-seeds on next start.
+//   deno task reset          # clear prayers + sessions.
 //                            # KEEPS the admin password so you aren't locked out.
 //   deno task reset --all    # also remove the admin password (full wipe).
 //
@@ -21,11 +21,10 @@ async function clearPrefix(prefix: Deno.KvKey): Promise<number> {
 }
 
 const prayers = await clearPrefix(["prayers"]);
-await kv.delete(["prayers_seeded"]); // let the sample requests re-seed on next start
+await kv.delete(["prayers_seeded"]); // remove the legacy sample-seeding flag
 const sessions = await clearPrefix(["session"]);
 
 console.log(`✓ Cleared ${prayers} prayer request(s) and ${sessions} session(s).`);
-console.log("  Sample requests will re-seed the next time the server starts.");
 
 if (all) {
   await kv.delete(["admin", "password"]);

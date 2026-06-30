@@ -91,13 +91,12 @@ dropdown in the top navigation.
 
 An interactive feature where the congregation shares prayer requests, taps **"I prayed"** to
 encourage one another, and celebrates **answered prayers**. Requests persist in
-[Deno KV](https://docs.deno.com/deploy/kv/manual/) (a few realistic examples are seeded on first run
-so the wall is never empty).
+[Deno KV](https://docs.deno.com/deploy/kv/manual/).
 
 - **Works without JavaScript** — forms POST and the server replies with a 303 redirect. With JS, the
   "I prayed" button updates the count in place and remembers your taps.
-- **Management** (marking requests answered) happens in the password-protected [Admin](#admin) area,
-  not on the public wall.
+- **Management** (marking requests answered or permanently deleting requests and testimonies)
+  happens in the password-protected [Admin](#admin) area, not on the public wall.
 
 ## Admin
 
@@ -113,9 +112,10 @@ deno task set-password "a-strong-passphrase"
 ```
 
 **2. Sign in** at **`/admin/login`** → you land on **`/admin`**, where you can see the stats and
-mark requests as answered. When marking one answered, the pastor can record a **praise report**
-("what did God do?") — it becomes the headline of the public testimony. The dashboard also greets
-the pastor by name and cycles encouraging scriptures with a typing animation.
+mark requests as answered or delete them. When marking one answered, the pastor can record a
+**praise report** ("what did God do?") — it becomes the headline of the public testimony. Answered
+testimonies can also be deleted from this page. The dashboard greets the pastor by name and cycles
+encouraging scriptures with a typing animation.
 
 The admin area has three tabs:
 
@@ -161,8 +161,7 @@ MSM_KV_PATH=./data/msm.db deno task start
 Stop the server first (the local KV is single-writer), then:
 
 ```sh
-deno task reset          # clear prayers + sessions; sample requests re-seed on
-                         # next start. Keeps the admin password.
+deno task reset          # clear prayers + sessions; keep the admin password
 deno task reset --all    # also remove the admin password (full wipe)
 ```
 
@@ -179,7 +178,7 @@ Alternatively, if you pinned `MSM_KV_PATH` to a file, you can just delete that f
 Remove-Item ./data/msm.db*       # PowerShell
 ```
 
-This gives a completely fresh store — prayers re-seed and you'll set a new password.
+This gives a completely fresh store, and you'll set a new password.
 
 ## Quality
 

@@ -11,7 +11,14 @@
 import { STATUS_CODE } from "@std/http/status";
 import { serveFile } from "@std/http/file-server";
 import * as pages from "./pages.ts";
-import { addPrayer, getStats, listPrayers, markAnswered, prayFor } from "./prayers.ts";
+import {
+  addPrayer,
+  deletePrayer,
+  getStats,
+  listPrayers,
+  markAnswered,
+  prayFor,
+} from "./prayers.ts";
 import { addLesson, deleteLesson, getLesson, lessonPath, listLessons } from "./lessons.ts";
 import { contact, saveContact } from "./settings.ts";
 import {
@@ -172,6 +179,12 @@ async function handlePost(request: Request, url: URL, path: string): Promise<Res
   if (path === "/admin/answer") {
     if (!(await isAuthed(request))) return redirect("/admin/login");
     await markAnswered(String(form.get("id") ?? ""), String(form.get("outcome") ?? ""));
+    return redirect("/admin");
+  }
+
+  if (path === "/admin/prayers/delete") {
+    if (!(await isAuthed(request))) return redirect("/admin/login");
+    await deletePrayer(String(form.get("id") ?? ""));
     return redirect("/admin");
   }
 

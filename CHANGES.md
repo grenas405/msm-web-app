@@ -2,6 +2,17 @@
 
 All notable changes to the Mercy Seat Ministries web app are documented here.
 
+## Unreleased
+
+### Changed
+
+- Removed the fictional Prayer Wall requests and answered-prayer testimony. A one-time migration
+  deletes the four legacy examples from existing databases, and new installations start with an
+  empty wall ready for genuine submissions.
+- Added permanent **Delete** controls for active requests and answered testimonies in the protected
+  Prayer Wall admin dashboard. Deleting all entries leaves the public wall active with its normal
+  empty state.
+
 ## [1.11.0] — 2026-06-27
 
 ### Changed

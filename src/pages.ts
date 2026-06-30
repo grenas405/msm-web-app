@@ -1171,25 +1171,38 @@ function adminRow(p: Prayer, topId: string | null): string {
           )} prayed</span>
         </div>
       </div>
-      <details class="answer-details">
-        <summary class="answer-summary">${raw(icon("check").value)} Mark answered</summary>
-        <form method="post" action="/admin/answer" class="answer-form-full">
+      <div class="admin-row-actions">
+        <details class="answer-details">
+          <summary class="answer-summary">${raw(icon("check").value)} Mark answered</summary>
+          <form method="post" action="/admin/answer" class="answer-form-full">
+            <input type="hidden" name="id" value="${p.id}">
+            <label class="answer-field">
+              <span>Share the praise report — what did God do?
+                <em>(optional · becomes a public testimony)</em></span>
+              <textarea
+                name="outcome"
+                rows="3"
+                maxlength="600"
+                placeholder="e.g. The surgery went perfectly and recovery is ahead of schedule — praise God!"
+              ></textarea>
+            </label>
+            <button class="btn btn-sm" type="submit">
+              ${raw(icon("spark").value)} Record &amp; give thanks
+            </button>
+          </form>
+        </details>
+        <form
+          method="post"
+          action="/admin/prayers/delete"
+          class="delete-prayer-form"
+          onsubmit="return confirm('Permanently delete this prayer request?')"
+        >
           <input type="hidden" name="id" value="${p.id}">
-          <label class="answer-field">
-            <span>Share the praise report — what did God do?
-              <em>(optional · becomes a public testimony)</em></span>
-            <textarea
-              name="outcome"
-              rows="3"
-              maxlength="600"
-              placeholder="e.g. The surgery went perfectly and recovery is ahead of schedule — praise God!"
-            ></textarea>
-          </label>
-          <button class="btn btn-sm" type="submit">
-            ${raw(icon("spark").value)} Record &amp; give thanks
+          <button class="btn btn-sm btn-danger" type="submit">
+            ${raw(icon("trash").value)} Delete
           </button>
         </form>
-      </details>
+      </div>
     </article>
   `;
 }
@@ -1210,7 +1223,20 @@ function adminAnsweredCard(p: Prayer): string {
     <article class="admin-answered">
       <span class="answered-badge">${raw(icon("check").value)} Answered ${raw(when)}</span>
       ${raw(detail)}
-      <span class="prayer-who">${raw(icon("spark").value)} ${who}</span>
+      <div class="admin-answered-footer">
+        <span class="prayer-who">${raw(icon("spark").value)} ${who}</span>
+        <form
+          method="post"
+          action="/admin/prayers/delete"
+          class="delete-prayer-form"
+          onsubmit="return confirm('Permanently delete this answered prayer?')"
+        >
+          <input type="hidden" name="id" value="${p.id}">
+          <button class="btn btn-sm btn-danger" type="submit">
+            ${raw(icon("trash").value)} Delete
+          </button>
+        </form>
+      </div>
     </article>
   `;
 }
@@ -1248,7 +1274,7 @@ export function adminDashboard(view: AdminDashboardView): string {
         <p class="section-lead">Rejoice with those who rejoice — God has been faithful.</p>
       </div>
       <div class="admin-answered-grid">
-        ${raw(view.answered.slice(0, 6).map(adminAnsweredCard).join(""))}
+        ${raw(view.answered.map(adminAnsweredCard).join(""))}
       </div>
     `
     : "";

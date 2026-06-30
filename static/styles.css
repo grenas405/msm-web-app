@@ -1784,10 +1784,17 @@ iframe {
   font-size: 0.98rem;
 }
 
-/* Disclosure to mark a request answered with a praise report. */
-.answer-details {
+/* Controls to mark a request answered or permanently delete it. */
+.admin-row-actions {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.75rem;
   border-top: 1px dashed var(--line);
   padding-top: 0.9rem;
+}
+.answer-details {
+  flex: 1;
 }
 .answer-summary {
   display: inline-flex;
@@ -1867,6 +1874,23 @@ iframe {
 }
 .answer-form-full .btn {
   width: fit-content;
+}
+.delete-prayer-form {
+  margin: 0;
+  flex: none;
+}
+.btn-danger {
+  color: #8a1c1c;
+  background: rgba(160, 30, 30, 0.07);
+  border-color: rgba(160, 30, 30, 0.2);
+  box-shadow: none;
+}
+.btn-danger:hover {
+  color: #721717;
+  background: rgba(160, 30, 30, 0.14);
+  border-color: rgba(160, 30, 30, 0.32);
+  transform: none;
+  box-shadow: none;
 }
 
 /* Answered praise report (testimony) display. */
@@ -2067,6 +2091,13 @@ iframe {
 }
 .admin-answered .testimony-outcome {
   font-size: 1.25rem;
+}
+.admin-answered-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-top: auto;
 }
 
 /* ── Contact: pastor photo ───────────────────────────────── */
@@ -2594,6 +2625,14 @@ a.social-card:hover {
     justify-content: flex-end;
   }
   .answer-summary {
+    width: 100%;
+    justify-content: center;
+  }
+  .admin-row-actions {
+    flex-direction: column;
+  }
+  .admin-row-actions .delete-prayer-form,
+  .admin-row-actions .btn-danger {
     width: 100%;
     justify-content: center;
   }
