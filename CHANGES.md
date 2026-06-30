@@ -12,6 +12,11 @@ All notable changes to the Mercy Seat Ministries web app are documented here.
 - Added permanent **Delete** controls for active requests and answered testimonies in the protected
   Prayer Wall admin dashboard. Deleting all entries leaves the public wall active with its normal
   empty state.
+- Added a public **Bible Study** page and top-level menu option for Friday chapter and passage
+  links. The pastor can post dated links and delete old ones from a new protected **Bible Study**
+  admin tab; links are validated and persisted in Deno KV.
+- The desktop navigation now switches to the mobile menu at 1400px to accommodate the additional
+  top-level option without crowding.
 
 ## [1.11.0] — 2026-06-27
 

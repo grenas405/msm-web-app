@@ -1,6 +1,6 @@
 // kv.ts — The single shared Deno KV handle for the whole app.
 // Open it once here and import `kv` everywhere, so every module reads and
-// writes the same store (prayers, admin password, sessions).
+// writes the same store (prayers, Bible Study links, admin password, sessions).
 //
 // Set MSM_KV_PATH to pin the database to a specific file (recommended for
 // local/self-hosted runs so every process — server and the set-password

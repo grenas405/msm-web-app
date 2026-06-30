@@ -19,6 +19,7 @@ import {
   VERSES,
 } from "./content.ts";
 import { contact as contactInfo, type ContactInfo } from "./settings.ts";
+import type { BibleStudyLink } from "./bible-studies.ts";
 import type { Lesson } from "./lessons.ts";
 import type { Prayer, PrayerStats } from "./prayers.ts";
 
@@ -635,7 +636,7 @@ export function giving(): string {
 // ── Sunday School ─────────────────────────────────────────────────────────
 
 /** Format an ISO date (YYYY-MM-DD) as e.g. "August 4, 2024". */
-function formatLessonDate(iso: string): string {
+function formatDisplayDate(iso: string): string {
   const [y, m, d] = iso.split("-").map(Number);
   if (!y || !m || !d) return iso;
   return new Date(y, m - 1, d).toLocaleDateString("en-US", {
@@ -652,7 +653,7 @@ function lessonRow(l: Lesson): string {
       <span class="lesson-icon">${raw(icon("book").value)}</span>
       <span class="lesson-info">
         <span class="lesson-title">${l.title}</span>
-        <span class="lesson-date">${formatLessonDate(l.date)}</span>
+        <span class="lesson-date">${formatDisplayDate(l.date)}</span>
       </span>
       <span class="lesson-cta">View PDF ${raw(icon("arrow").value)}</span>
     </a>
@@ -700,6 +701,78 @@ export function sundaySchool(lessons: Lesson[]): string {
     description:
       "Download Sunday School lessons from Mercy Seat Ministries OKC and browse the archive of past lessons.",
     path: "/sunday-school",
+    body,
+  });
+}
+
+// ── Bible Study ──────────────────────────────────────────────────────────
+
+/** A Friday study passage linking to an external Bible reader. */
+function bibleStudyRow(study: BibleStudyLink): string {
+  return html`
+    <a
+      class="lesson-row study-row"
+      href="${study.url}"
+      target="_blank"
+      rel="noopener noreferrer"
+    >
+      <span class="lesson-icon">${raw(icon("book").value)}</span>
+      <span class="lesson-info">
+        <span class="lesson-title">${study.reference}</span>
+        <span class="lesson-date">Friday study · ${formatDisplayDate(study.date)}</span>
+      </span>
+      <span class="lesson-cta">Read passage ${raw(icon("arrow").value)}</span>
+    </a>
+  `;
+}
+
+export function bibleStudy(studies: BibleStudyLink[]): string {
+  const list = studies.length > 0
+    ? html`
+      <div class="lesson-list study-list">
+        ${raw(studies.map(bibleStudyRow).join(""))}
+      </div>
+    `
+    : html`
+      <p class="empty-note">
+        Friday Bible Study passages will be posted here soon. Join us Fridays from 6:00–8:00 PM!
+      </p>
+    `;
+
+  const body = html`
+    <section class="page-hero">
+      <div class="container">
+        <p class="eyebrow">Friday Bible Study</p>
+        <h1>Read ahead. Come ready to grow.</h1>
+        <p class="page-hero-lead">
+          Open the chapters and passages we'll study together on Friday evenings. Each link opens
+          the Scripture in a new tab.
+        </p>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container">
+        <div class="section-head">
+          <h2>Study passages</h2>
+          <p class="section-lead">Newest study dates appear first.</p>
+        </div>
+        ${raw(list)}
+      </div>
+    </section>
+
+    ${raw(scriptureBanner({
+      text:
+        "They received the message with great eagerness and examined the Scriptures every day to see if what Paul said was true.",
+      reference: "Acts 17:11",
+    }))}
+  `;
+
+  return page({
+    title: "Bible Study",
+    description:
+      "Read the Bible chapters and passages for Friday Bible Study at Mercy Seat Ministries OKC.",
+    path: "/bible-study",
     body,
   });
 }
@@ -1356,7 +1429,7 @@ export function adminDashboard(view: AdminDashboardView): string {
 }
 
 /** Tab navigation shared by the admin screens. */
-function adminTabs(active: "prayer" | "lessons" | "contact"): string {
+function adminTabs(active: "prayer" | "lessons" | "bible-study" | "contact"): string {
   const tab = (id: string, href: string, label: string) =>
     html`
       <a class="admin-tab${active === id ? " active" : ""}" href="${href}">${label}</a>
@@ -1365,7 +1438,9 @@ function adminTabs(active: "prayer" | "lessons" | "contact"): string {
     <nav class="admin-tabs" aria-label="Admin sections">
       ${raw(tab("prayer", "/admin", "Prayer Wall"))} ${raw(
         tab("lessons", "/admin/lessons", "Sunday School"),
-      )} ${raw(tab("contact", "/admin/contact", "Contact Info"))}
+      )} ${raw(tab("bible-study", "/admin/bible-study", "Bible Study"))} ${raw(
+        tab("contact", "/admin/contact", "Contact Info"),
+      )}
     </nav>
   `;
 }
@@ -1391,7 +1466,7 @@ function adminLessonRow(l: Lesson): string {
         <a class="lesson-title" href="/lessons/${l.id}.pdf" target="_blank" rel="noopener">
           ${l.title}
         </a>
-        <span class="lesson-date">${formatLessonDate(l.date)} · ${formatBytes(l.size)}</span>
+        <span class="lesson-date">${formatDisplayDate(l.date)} · ${formatBytes(l.size)}</span>
       </div>
       <form
         method="post"
@@ -1490,6 +1565,142 @@ export function adminLessons(view: AdminLessonsView): string {
     title: "Sunday School Admin",
     description: "Manage Sunday School lessons.",
     path: "/admin/lessons",
+    body,
+    bare: true,
+  });
+}
+
+export interface AdminBibleStudyView {
+  studies: BibleStudyLink[];
+  error: string | null;
+}
+
+/** A managed Friday study link with a permanent delete control. */
+function adminBibleStudyRow(study: BibleStudyLink): string {
+  return html`
+    <article class="admin-lesson">
+      <span class="lesson-icon">${raw(icon("book").value)}</span>
+      <div class="admin-lesson-info">
+        <a
+          class="lesson-title"
+          href="${study.url}"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          ${study.reference}
+        </a>
+        <span class="lesson-date">Friday study · ${formatDisplayDate(study.date)}</span>
+      </div>
+      <form
+        method="post"
+        action="/admin/bible-study/delete"
+        class="admin-lesson-delete"
+        onsubmit="return confirm('Delete this Bible Study link? This cannot be undone.')"
+      >
+        <input type="hidden" name="id" value="${study.id}">
+        <button class="admin-delete-btn" type="submit" aria-label="Delete Bible Study link">
+          Delete
+        </button>
+      </form>
+    </article>
+  `;
+}
+
+/** Protected page for posting and managing Friday Bible Study links. */
+export function adminBibleStudy(view: AdminBibleStudyView): string {
+  const alert = view.error
+    ? html`
+      <p class="admin-alert" role="alert">${view.error}</p>
+    `
+    : "";
+
+  const list = view.studies.length > 0
+    ? html`
+      <div class="admin-lesson-list">
+        ${raw(view.studies.map(adminBibleStudyRow).join(""))}
+      </div>
+    `
+    : html`
+      <p class="empty-note">No passages posted yet. Add the first Friday study link above.</p>
+    `;
+
+  const body = html`
+    <section class="admin-shell">
+      <div class="container">
+        <header class="admin-bar">
+          <div class="admin-brand">
+            <span class="admin-mark">${raw(icon("book").value)}</span>
+            <div>
+              <p class="eyebrow">${SITE.name} · Bible Study</p>
+              <h1>Friday Study Passages</h1>
+              <p class="admin-date">Post chapter links and manage the study list</p>
+            </div>
+          </div>
+          <div class="admin-bar-actions">
+            <a class="btn btn-sm btn-outline" href="/bible-study" target="_blank" rel="noopener">
+              View page ${raw(icon("arrow").value)}
+            </a>
+            <form method="post" action="/admin/logout">
+              <button class="btn btn-sm" type="submit">Sign out</button>
+            </form>
+          </div>
+        </header>
+
+        ${raw(adminTabs("bible-study"))}
+
+        <div class="upload-card">
+          <h2>Post a study passage</h2>
+          <p class="muted">
+            Open the chapter on your preferred online Bible, copy its web address, and paste it
+            below.
+          </p>
+          ${raw(alert)}
+          <form method="post" action="/admin/bible-study" class="upload-form study-link-form">
+            <label>
+              <span>Chapter or passage</span>
+              <input
+                type="text"
+                name="reference"
+                maxlength="120"
+                required
+                placeholder="e.g. Romans 8"
+              >
+            </label>
+            <label>
+              <span>Friday study date</span>
+              <input type="date" name="date" required>
+            </label>
+            <label class="study-url">
+              <span>Link to the passage</span>
+              <input
+                type="url"
+                name="url"
+                maxlength="2048"
+                required
+                placeholder="https://www.biblegateway.com/passage/..."
+              >
+            </label>
+            <button class="btn btn-lg" type="submit">
+              ${raw(icon("book").value)} Post passage
+            </button>
+          </form>
+        </div>
+
+        <div class="section-head feed-head admin-section-head">
+          <h2>Posted passages ${view.studies.length > 0
+            ? raw(`<span class="count-badge">${view.studies.length}</span>`)
+            : ""}</h2>
+          <p class="section-lead">Newest study date first. Links open in a new tab.</p>
+        </div>
+        ${raw(list)}
+      </div>
+    </section>
+  `;
+
+  return page({
+    title: "Bible Study Admin",
+    description: "Manage Friday Bible Study chapter links.",
+    path: "/admin/bible-study",
     body,
     bare: true,
   });

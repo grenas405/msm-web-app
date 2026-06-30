@@ -143,6 +143,7 @@ export const NAV: NavItem[] = [
   { label: "Services", href: "/services" },
   { label: "Ministries", href: "/ministries" },
   { label: "Sunday School", href: "/sunday-school" },
+  { label: "Bible Study", href: "/bible-study" },
   { label: "Daily Devotionals", href: "/devotionals" },
   { label: "Prayer Wall", href: "/prayer-wall" },
   { label: "Social Media", href: "/social" },

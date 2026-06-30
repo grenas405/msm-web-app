@@ -41,6 +41,7 @@ src/
   icons.ts         Inline SVG icon set; icon(name) -> trusted SVG
   layout.ts        The page shell: <head>, header/nav, footer  (page())
   pages.ts         One explicit function per page (home, …, prayer wall, admin)
+  bible-studies.ts Friday Bible Study chapter links — persists in Deno KV
   prayers.ts       Prayer Wall data layer — persists requests in Deno KV
   auth.ts          Admin auth: PBKDF2 password hashing, sessions, cookies
   kv.ts            The single shared Deno KV handle (honors MSM_KV_PATH)
@@ -78,14 +79,28 @@ static/
 | `/services`      | Service times + ways to attend (in person/Zoom/phone)      |
 | `/ministries`    | The ministries of the church (incl. Fellowship, Acts 2:46) |
 | `/sunday-school` | Download this week's lesson + browse the PDF archive       |
+| `/bible-study`   | Friday Bible Study chapter and passage links               |
 | `/devotionals`   | Links to Our Daily Bread, My Utmost, YouVersion Bible App  |
 | `/prayer-wall`   | Interactive prayer requests, "I prayed" counts, answered   |
 | `/social`        | Facebook & Instagram (links set in admin)                  |
 | `/giving`        | Online giving via Zelle + PayPal                           |
 | `/contact`       | Pastors' photo, phones, email, Zoom, and an embedded map   |
 
-Sunday School, Daily Devotionals, Prayer Wall, and Social Media are grouped under a **"Resources"**
-dropdown in the top navigation.
+These pages appear as top-level links in the main navigation, which switches to the mobile menu on
+smaller screens.
+
+## Bible Study
+
+The `/bible-study` page lists the Bible chapters and passages for Friday studies, newest study date
+first. Each link opens the Scripture on the external Bible website chosen by the pastor.
+
+To post one, sign in at `/admin/login`, open the **Bible Study** tab, and enter:
+
+1. The chapter or passage name, such as `Romans 8`.
+2. The Friday study date.
+3. The complete link copied from an online Bible, beginning with `https://`.
+
+Posted links can be opened for review or permanently deleted from the same admin screen.
 
 ## Prayer Wall
 
@@ -100,8 +115,8 @@ encourage one another, and celebrates **answered prayers**. Requests persist in
 
 ## Admin
 
-Prayer Wall management lives behind a password-protected admin area. **The login page is
-intentionally not linked anywhere** — the site manager navigates directly to it.
+Site management lives behind a password-protected admin area. **The login page is intentionally not
+linked anywhere** — the site manager navigates directly to it.
 
 **1. Set a password** (do this before starting the server — the local KV is single-writer):
 
@@ -117,12 +132,14 @@ mark requests as answered or delete them. When marking one answered, the pastor 
 testimonies can also be deleted from this page. The dashboard greets the pastor by name and cycles
 encouraging scriptures with a typing animation.
 
-The admin area has three tabs:
+The admin area has four tabs:
 
 - **Prayer Wall** (`/admin`) — manage requests and answered testimonies.
 - **Sunday School** (`/admin/lessons`) — upload a lesson PDF with a title and date, and delete old
   ones. PDFs are stored on disk under `MSM_DATA_DIR` (default `./data`); metadata lives in KV.
   Uploads are validated as PDFs and capped at 25 MB. The public archive is at `/sunday-school`.
+- **Bible Study** (`/admin/bible-study`) — post a chapter or passage name, Friday date, and external
+  Bible link; review or delete existing links. The public list is at `/bible-study`.
 - **Contact Info** (`/admin/contact`) — edit the email, phone numbers, address, Zoom link, Zelle
   giving email, **PayPal link**, and **Facebook/Instagram links** anytime. Changes go live
   immediately across the Contact page, footer, Giving page, and Social Media page (defaults live in

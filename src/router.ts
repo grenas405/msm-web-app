@@ -2,6 +2,7 @@
 //
 //   • Static GET pages   — pure () => string builders in the ROUTES table.
 //   • Prayer Wall         — public GET + POST (share, pray), backed by Deno KV.
+//   • Bible Study         — public links + protected add/delete, backed by Deno KV.
 //   • Admin               — /admin/login and /admin, protected by a session
 //                           cookie. The login page is intentionally unlinked.
 //
@@ -11,6 +12,7 @@
 import { STATUS_CODE } from "@std/http/status";
 import { serveFile } from "@std/http/file-server";
 import * as pages from "./pages.ts";
+import { addBibleStudyLink, deleteBibleStudyLink, listBibleStudyLinks } from "./bible-studies.ts";
 import {
   addPrayer,
   deletePrayer,
@@ -68,6 +70,9 @@ export async function route(request: Request, url: URL): Promise<Response> {
   if (path === "/sunday-school") {
     return htmlResponse(pages.sundaySchool(await listLessons()));
   }
+  if (path === "/bible-study") {
+    return htmlResponse(pages.bibleStudy(await listBibleStudyLinks()));
+  }
   if (path.startsWith("/lessons/") && path.endsWith(".pdf")) {
     return await serveLesson(request, path);
   }
@@ -83,6 +88,12 @@ export async function route(request: Request, url: URL): Promise<Response> {
   if (path === "/admin/lessons") {
     if (!(await isAuthed(request))) return redirect("/admin/login");
     return htmlResponse(pages.adminLessons({ lessons: await listLessons(), error: null }));
+  }
+  if (path === "/admin/bible-study") {
+    if (!(await isAuthed(request))) return redirect("/admin/login");
+    return htmlResponse(
+      pages.adminBibleStudy({ studies: await listBibleStudyLinks(), error: null }),
+    );
   }
   if (path === "/admin/contact") {
     if (!(await isAuthed(request))) return redirect("/admin/login");
@@ -197,6 +208,31 @@ async function handlePost(request: Request, url: URL, path: string): Promise<Res
     if (!(await isAuthed(request))) return redirect("/admin/login");
     await deleteLesson(String(form.get("id") ?? ""));
     return redirect("/admin/lessons");
+  }
+
+  if (path === "/admin/bible-study") {
+    if (!(await isAuthed(request))) return redirect("/admin/login");
+    const study = await addBibleStudyLink({
+      reference: String(form.get("reference") ?? ""),
+      date: String(form.get("date") ?? ""),
+      url: String(form.get("url") ?? ""),
+    });
+    if (!study) {
+      return htmlResponse(
+        pages.adminBibleStudy({
+          studies: await listBibleStudyLinks(),
+          error: "Enter a passage, a valid study date, and a complete http:// or https:// link.",
+        }),
+        STATUS_CODE.BadRequest,
+      );
+    }
+    return redirect("/admin/bible-study");
+  }
+
+  if (path === "/admin/bible-study/delete") {
+    if (!(await isAuthed(request))) return redirect("/admin/login");
+    await deleteBibleStudyLink(String(form.get("id") ?? ""));
+    return redirect("/admin/bible-study");
   }
 
   if (path === "/admin/contact") {

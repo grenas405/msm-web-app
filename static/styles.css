@@ -2210,7 +2210,7 @@ iframe {
   margin-bottom: 1rem;
 }
 
-/* ── Sunday School (public) ──────────────────────────────── */
+/* ── Sunday School + Bible Study lists (public) ──────────── */
 .lesson-list {
   display: grid;
   gap: 1rem;
@@ -2289,6 +2289,7 @@ iframe {
 /* ── Admin: tabs ─────────────────────────────────────────── */
 .admin-tabs {
   display: flex;
+  flex-wrap: wrap;
   gap: 0.5rem;
   margin-bottom: 2rem;
   border-bottom: 1px solid var(--line);
@@ -2339,11 +2340,13 @@ iframe {
   color: var(--navy-800);
 }
 .upload-form .upload-file,
+.upload-form .study-url,
 .upload-form .btn {
   grid-column: 1 / -1;
 }
 .upload-form input[type="text"],
-.upload-form input[type="date"] {
+.upload-form input[type="date"],
+.upload-form input[type="url"] {
   font-family: var(--sans);
   font-size: 1rem;
   color: var(--ink);
@@ -2591,7 +2594,7 @@ a.social-card:hover {
 
 /* ── Responsive ──────────────────────────────────────────── */
 /* Switch to the mobile menu before the wider nav can overflow. */
-@media (max-width: 1300px) {
+@media (max-width: 1400px) {
   .site-nav,
   .header-cta {
     display: none;
