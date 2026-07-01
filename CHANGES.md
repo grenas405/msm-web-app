@@ -4,6 +4,14 @@ All notable changes to the Mercy Seat Ministries web app are documented here.
 
 ## Unreleased
 
+### Added
+
+- `scripts/diagnose-tls-reset.sh` — VPS-side diagnostic for the "connection reset" that hits
+  `msmokc.org` over HTTPS while sibling vhosts on the same box work. It probes each SNI over both
+  loopback and the public IP, runs a `tcpdump` self-test to see who sends the RST, and inspects
+  nginx, netfilter/nftables, any inline IPS (suricata/snort/crowdsec/NFQUEUE), fail2ban, and
+  recent config changes, then prints a heuristic verdict (on-box vs provider-edge SNI filtering).
+
 ### Changed
 
 - Removed the fictional Prayer Wall requests and answered-prayer testimony. A one-time migration
